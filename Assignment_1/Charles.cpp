@@ -142,86 +142,78 @@ void find_ball()
 
 // here starts the part with code to be completed by the students
 
-// Name / student number / study student 1 :
-// Name / student number / study student 2 :
+// Name / student number / study student 1 : 
+// Name / student number / study student 2 : Patrick Hilhorst / S4577434 / Informatica
 
-// give one or more comment lines about what will happen in this function
-void clean_string_with_balls()
+void safe_get_ball()
 {
-	make_string_with_balls();
-	int i = 0;
-	while (i < 4) { //because for loops are *for*bidden /terrible
-					//	for (int i = 0; i < 4; i++) {// 4 walls to clear
-		while (!in_front_of_wall()) {
-			step();
-			get_ball();
-		};
-		turn_right();
-		i++;
-	}
-}
-
-
-void clear_line()
-{
-	while (on_ball()) {
+	if (on_ball())
 		get_ball();
-		step();
-	}
-	turn_around();
-	walk_to_wall();
 }
 
 void get_balls_until_wall()
 {
 	while (!in_front_of_wall())
 	{
+		safe_get_ball();
 		step();
-		if (on_ball())
-			get_ball();
+	}
+	safe_get_ball();
+}
 
+// give one or more comment lines about what will happen in this function
+void clean_string_with_balls()
+{
+	make_string_with_balls();
+//	while (i < 4) { //because for loops are *for*bidden /terrible
+	for (int i = 0; i < 4; i++) {// 4 walls to clear
+		get_balls_until_wall();
+		turn_right();
 	}
 }
+
+
 // give one or more comment lines about what will happen in this function
 void clean_chaos_with_balls()
 {
-	make_chaos_with_balls();
-	//	walk_to_wall();
+	make_chaos_with_balls(); // Sets up initial conditions
+	//	walk_to_wall(); //old code, used a more naive approach.
 	//	turn_right();
 	//	while (on_ball()) {
 	//		turn_right();
-	//		clear_line();
+	//		clear_line(); //was removed, because this was its only usage
 	//		turn_right();
 	//		step();
 	//	}
-	while (true)
+	while (true) // This will be `break`ed out of
 	{
-		get_balls_until_wall();
+		get_balls_until_wall(); // goes to rightmost wall
 		turn_right();
-		step();
-		if (!on_ball()) {
+		step(); 
+		if (!on_ball())  // This happens when the bottom of the stack is reached
 			break;
-		}
-		turn_right();
-		while (on_ball()) {
+		turn_right(); //now facing right
+		while (on_ball()) { //gets balls until end of 'line'
 			get_ball();
 			step();
 		}
-		turn_left();
-		step();
-		if (on_ball())
+		turn_left(); // now facing down
+		step(); //steps to next line
+		if (on_ball()) //This means we need to go a bit more to the left to get to the start of the line. 
 		{
-			turn_right();
-			while (on_ball()) {
+			turn_right(); 
+			while (on_ball()) { //We step over all the balls, we will pick them up later anyways
 				step();
 			}
-			turn_around();
+			turn_around(); //now facing left
 		}
 		else {
-			turn_left();
+			turn_left(); //we either are at the end of the stack, or this line is shorter than the previous one
 		}
+		// At this point, we are basically in the initial condition, to the left of a line with an unknown number of balls and walls in front of us.
+		// When we loop back up, these will be collected again.
 	}
-	go_to_north_west_corner();
+	go_to_north_west_corner(); //return home.
 
 }
 
@@ -242,7 +234,7 @@ void around_the_block()
 	}
 	turn_right();
 	walk_to_wall();
-	for (int i = 0; i < 4; i++) {
+	for (char i = 0; i < 4; i++) {
 		while (in_front_of_wall()) {
 			turn_left();
 			step();
@@ -264,7 +256,6 @@ void search_the_ball()
 // For testing purposes, you can define your own function here:
 void test()
 {
-	// enter your Charles code here
 
 }
 
