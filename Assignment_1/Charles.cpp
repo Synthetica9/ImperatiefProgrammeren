@@ -142,8 +142,8 @@ void find_ball()
 
 // here starts the part with code to be completed by the students
 
-// Name / student number / study student 1 : 
-// Name / student number / study student 2 : Patrick Hilhorst / S4577434 / Informatica
+// Name / student number / study student 1 : Fons van der Plas / S4576586 / Mathematics
+// Name / student number / study student 2 : Patrick Hilhorst / S4577434 / Computer science
 
 void safe_get_ball()
 {
@@ -164,8 +164,9 @@ void get_balls_until_wall()
 // give one or more comment lines about what will happen in this function
 void clean_string_with_balls()
 {
+	reset();
 	make_string_with_balls();
-//	while (i < 4) { //because for loops are *for*bidden /terrible
+	//	while (i < 4) { //because for loops are *for*bidden /terrible
 	for (int i = 0; i < 4; i++) {// 4 walls to clear
 		get_balls_until_wall();
 		turn_right();
@@ -176,6 +177,7 @@ void clean_string_with_balls()
 // give one or more comment lines about what will happen in this function
 void clean_chaos_with_balls()
 {
+	reset();
 	make_chaos_with_balls(); // Sets up initial conditions
 	//	walk_to_wall(); //old code, used a more naive approach.
 	//	turn_right();
@@ -189,7 +191,7 @@ void clean_chaos_with_balls()
 	{
 		get_balls_until_wall(); // goes to rightmost wall
 		turn_right();
-		step(); 
+		step();
 		if (!on_ball())  // This happens when the bottom of the stack is reached
 			break;
 		turn_right(); //now facing right
@@ -201,7 +203,7 @@ void clean_chaos_with_balls()
 		step(); //steps to next line
 		if (on_ball()) //This means we need to go a bit more to the left to get to the start of the line. 
 		{
-			turn_right(); 
+			turn_right();
 			while (on_ball()) { //We step over all the balls, we will pick them up later anyways
 				step();
 			}
