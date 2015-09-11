@@ -27,8 +27,8 @@ void make_church ()
 
 // here starts the part with code to be completed by the students
 
-// Name / student number / study student 1 :
-// Name / student number / study student 2 :
+// Name / student number / study student 1 : Patrick Hilhorst / S4577434 / Computer Science
+// Name / student number / study student 2 : Fons van der Plas / S4576586 / Mathematics
 
 void turn_around()
 {
@@ -39,13 +39,13 @@ void turn_around()
 // turn_north makes Charles look north
 void turn_north()
 {
-	while (!north())
+	while(!north())
 		turn_left();
 }
 
 void walk_to_wall()
 {
-	while (!in_front_of_wall())
+	while(!in_front_of_wall())
 		step();
 }
 
@@ -59,74 +59,74 @@ void go_to_north_west_corner()
 }
 
 
-bool check_path ()
+bool check_path()
 {
-	bool returnvalue;
-	if (!in_front_of_wall())
+	bool return_value;
+	if(!in_front_of_wall())
 	{
-		
 		step();
-		if (on_ball())
+		if(on_ball())
 		{
-			returnvalue = true;
-		} else {
-			returnvalue = false;
+			return_value = true;
+		}
+		else
+		{
+			return_value = false;
 			turn_around();
 			step();
 		}
-	} else
+	}
+	else
 	{
 		turn_around();
-		returnvalue = false;
+		return_value = false;
 	}
-	return returnvalue;
+	return return_value;
 }
 
 // give one or more comment lines about what will happen in this function
-void follow_path ()
+void follow_path()
 {
-	while (1)
+	while(true)
 	{
-		while (on_ball() && !in_front_of_wall())
+		while(on_ball() && !in_front_of_wall())
+		{
 			step();
-		if (!on_ball())
+		}
+		if(!on_ball())
 		{
 			turn_around();
 			step();
-			
 		}
 		turn_left();
-		if (!check_path())
+		if(!check_path())
 		{
-			if (!check_path())
+			if(!check_path())
 			{
 				break;
 				//We are at the end of the line here.
 			}
 		}
-		
 	}
-
-	
 }
 
 // give one or more comment lines about what will happen in this function
-void hansl_and_gretl ()
+void hansl_and_gretl()
 {
-	make_path_with_balls() ;
-	follow_path () ;
+	make_path_with_balls();
+	follow_path();
 }
 
 // give one or more comment lines about what will happen in this function
 // note that you are allowed to add formal parameters to fill_cave_with_balls if that is necessary for your solution
-void fill_cave_with_balls ()
+void fill_cave_with_balls()
 {
-    // give your own code completion
+	// give your own code completion
 	step();
-	while (!in_front_of_wall())
+	while(!in_front_of_wall())
 	{
 		turn_right();
-		while (!in_front_of_wall())
+		while(!in_front_of_wall())
 		{
 			put_ball();
 			step();
@@ -143,53 +143,60 @@ void fill_cave_with_balls ()
 }
 
 // give one or more comment lines about what will happen in this function
-void cave ()
+void cave()
 {
 	// if necessary for your solution, you are allowed to give actual parameters to fill_cave_with_balls
-	fill_cave_with_balls () ;
-	fill_cave_with_balls () ;
+	fill_cave_with_balls();
+	fill_cave_with_balls();
 }
 
 // give one or more comment lines about what will happen in this function
-void start_cave ()
+void start_cave()
 {
-    make_cave () ;
-    cave () ;
+	make_cave();
+	cave();
 }
 
 // give one or more comment lines about what will happen in this function
-void rondje_om_de_kerk ()
+void rondje_om_de_kerk()
 {
+	reset();
 	make_church();
-	while (!on_ball()) {
+	while(!on_ball()) // Walk to the ball marking the starting position of the church
+	{
 		step();
 	}
 	turn_right();
 	walk_to_wall();
-	// A count resulted in 20 corners on the church 
-	for (char i = 0; i < 20; i++) {
-		while (in_front_of_wall()) {
+
+	put_ball(); // Mark the start of the church perimeter
+
+	turn_left();
+	step(); // Move one step ahead to avoid starting on top of the ball
+	turn_right();
+
+	while(!on_ball()) // Perimeter-walking algorithm loops until the starting ball is found
+	{
+		while(in_front_of_wall())
+		{
 			turn_left();
-			if (in_front_of_wall())
-			{
-				i++;
-			} else
+			if(!in_front_of_wall())
 			{
 				step();
 				turn_right();
 			}
-
 		}
 		step();
 		turn_right();
 	}
+
 	go_to_north_west_corner();
 }
 
 // For testing purposes, you can define your own function here:
-void test ()
+void test()
 {
-    // enter your Charles code here
+	// enter your Charles code here
 }
 
 // end of part with code to be completed by students
