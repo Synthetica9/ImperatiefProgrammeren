@@ -58,18 +58,17 @@ void go_to_north_west_corner()
 	turn_around();
 }
 
-
-bool check_path()
+bool check_path() // Checks whether the path leads the way Charles is facing. If not, Charles will turn around.
 {
 	bool return_value;
-	if(!in_front_of_wall())
+	if(!in_front_of_wall()) // The path cannot lead to a wall
 	{
-		step();
-		if(on_ball())
+		step(); // Move one step ahead
+		if(on_ball()) // and check whether the path continues
 		{
 			return_value = true;
 		}
-		else
+		else // otherwise, turn around and return to the path corner
 		{
 			return_value = false;
 			turn_around();
@@ -84,80 +83,73 @@ bool check_path()
 	return return_value;
 }
 
-// give one or more comment lines about what will happen in this function
 void follow_path()
 {
 	while(true)
 	{
-		while(on_ball() && !in_front_of_wall())
+		while(on_ball() && !in_front_of_wall()) // Walk along the line of balls
 		{
 			step();
 		}
-		if(!on_ball())
+		if(!on_ball()) // Move one back, which places Charles on a corner, facing backwards
 		{
 			turn_around();
 			step();
 		}
 		turn_left();
-		if(!check_path())
+		if(!check_path()) // Check whether the path continues to the right, if not:
 		{
-			if(!check_path())
+			if(!check_path()) // Check whether the path continues to the left, if not:
 			{
 				break;
-				//We are at the end of the line here.
+				// We are at the end of the line
 			}
 		}
 	}
 }
 
-// give one or more comment lines about what will happen in this function
 void hansl_and_gretl()
 {
+	reset();
 	make_path_with_balls();
 	follow_path();
 }
 
-// give one or more comment lines about what will happen in this function
-// note that you are allowed to add formal parameters to fill_cave_with_balls if that is necessary for your solution
 void fill_cave_with_balls()
 {
-	// give your own code completion
 	step();
-	while(!in_front_of_wall())
+	while(!in_front_of_wall()) // While not in front of the right (or left) boundary
 	{
 		turn_right();
-		while(!in_front_of_wall())
+		while(!in_front_of_wall()) // Put balls until the cave wall is met
 		{
 			put_ball();
 			step();
 		}
 		put_ball();
-		turn_around();
+		turn_around(); // Return to the top (or bottom)
 		walk_to_wall();
 		turn_right();
-		step();
+		step(); // Move to the next column
 	}
-	turn_right();
+	turn_right(); // Move to the bottom (or top)
 	walk_to_wall();
 	turn_right();
 }
 
-// give one or more comment lines about what will happen in this function
 void cave()
 {
-	// if necessary for your solution, you are allowed to give actual parameters to fill_cave_with_balls
-	fill_cave_with_balls();
-	fill_cave_with_balls();
+	fill_cave_with_balls(); // Fill the top and move to the bottom
+	fill_cave_with_balls(); // Fill the bottom and return
 }
 
-// give one or more comment lines about what will happen in this function
 void start_cave()
 {
+	reset();
 	make_cave();
 	cave();
 }
 
-// give one or more comment lines about what will happen in this function
 void rondje_om_de_kerk()
 {
 	reset();
@@ -190,6 +182,7 @@ void rondje_om_de_kerk()
 		turn_right();
 	}
 
+	get_ball(); // Pick up the ball and return
 	go_to_north_west_corner();
 }
 
