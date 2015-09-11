@@ -30,10 +30,84 @@ void make_church ()
 // Name / student number / study student 1 :
 // Name / student number / study student 2 :
 
+void turn_around()
+{
+	turn_right();
+	turn_right();
+}
+
+// turn_north makes Charles look north
+void turn_north()
+{
+	while (!north())
+		turn_left();
+}
+
+void walk_to_wall()
+{
+	while (!in_front_of_wall())
+		step();
+}
+
+void go_to_north_west_corner()
+{
+	turn_north();
+	walk_to_wall();
+	turn_left();
+	walk_to_wall();
+	turn_around();
+}
+
+
+bool check_path ()
+{
+	bool returnvalue;
+	if (!in_front_of_wall())
+	{
+		
+		step();
+		if (on_ball())
+		{
+			returnvalue = true;
+		} else {
+			returnvalue = false;
+			turn_around();
+			step();
+		}
+	} else
+	{
+		turn_around();
+		returnvalue = false;
+	}
+	return returnvalue;
+}
+
 // give one or more comment lines about what will happen in this function
 void follow_path ()
 {
-    // give your own code completion
+	while (1)
+	{
+		while (on_ball() && !in_front_of_wall())
+			step();
+		if (!on_ball())
+		{
+			turn_around();
+			step();
+			
+		}
+		turn_left();
+		if (!check_path())
+		{
+			if (!check_path())
+			{
+				break;
+				//We are at the end of the line here.
+			}
+		}
+		
+	}
+
+	
 }
 
 // give one or more comment lines about what will happen in this function
@@ -48,6 +122,24 @@ void hansl_and_gretl ()
 void fill_cave_with_balls ()
 {
     // give your own code completion
+	step();
+	while (!in_front_of_wall())
+	{
+		turn_right();
+		while (!in_front_of_wall())
+		{
+			put_ball();
+			step();
+		}
+		put_ball();
+		turn_around();
+		walk_to_wall();
+		turn_right();
+		step();
+	}
+	turn_right();
+	walk_to_wall();
+	turn_right();
 }
 
 // give one or more comment lines about what will happen in this function
@@ -68,8 +160,30 @@ void start_cave ()
 // give one or more comment lines about what will happen in this function
 void rondje_om_de_kerk ()
 {
-    make_church () ;
-    // give your own code completion
+	make_church();
+	while (!on_ball()) {
+		step();
+	}
+	turn_right();
+	walk_to_wall();
+	// A count resulted in 20 corners on the church 
+	for (char i = 0; i < 20; i++) {
+		while (in_front_of_wall()) {
+			turn_left();
+			if (in_front_of_wall())
+			{
+				i++;
+			} else
+			{
+				step();
+				turn_right();
+			}
+
+		}
+		step();
+		turn_right();
+	}
+	go_to_north_west_corner();
 }
 
 // For testing purposes, you can define your own function here:

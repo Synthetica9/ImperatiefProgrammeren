@@ -40,7 +40,7 @@ extern void rest		(int n) ;
 extern void makeWorldEmpty () ;
 extern void newWorld	(const char wereld []) ;
 
-extern void steps (int number_of_steps) ;
+//extern void take_steps (int number_of_steps) ;
 extern void draw_line_with_balls ( int number_of_steps ) ;
 
 
@@ -78,7 +78,7 @@ private:
 } ;
 
 // For English version:
-extern void steps ( int ) ;
+extern void take_steps ( int ) ;
 extern void draw_line_with_balls ( int ) ;
 extern void place_rectangle (int, int, int, int) ;
 extern void place_walls (int, int, int, bool) ;

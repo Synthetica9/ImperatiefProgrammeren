@@ -717,5 +717,5 @@ void make_cave              ()  { Karel().maakGrot (); }
 void make_labyrinth         ()  { Karel().nieuweWereld ( "labyrinth" ) ; }
 void create_ball            (int x, int y) { Karel().creeerBal(x,y); }
 
-void steps (int number_of_steps) { stappen ( number_of_steps ) ; }
+void take_steps (int number_of_steps) { stappen ( number_of_steps ) ; }
 void draw_line_with_balls ( int number_of_steps )  { teken_ballenlijn ( number_of_steps ); }	// toegevoegd door Ger
