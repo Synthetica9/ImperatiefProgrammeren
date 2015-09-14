@@ -189,13 +189,33 @@ void rondje_om_de_kerk()
 // For testing purposes, you can define your own function here:
 void test()
 {
-	// enter your Charles code here
+	for (int i = 0; i <= (WereldBreedte / 2); i++)
+		step();
+	turn_right();
+	for (int i = 0; i <= (WereldHoogte / 2); i++)
+		step();
+	while(!in_front_of_wall())
+	{
+		step();
+		if (on_ball())
+		{
+			get_ball();
+			turn_left();
+		}
+		else
+		{
+			put_ball();
+			turn_right();
+		}
+	}
+
 }
 
 // end of part with code to be completed by students
 // =========================================================================
 
 
+void instant() { rest(0); };
 void quick  () { rest(    1); };
 void normal () { rest(dInit); };
 void slow   () { rest(  250); };
@@ -214,7 +234,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 	       .add ((char*)"Test a function",test);
 
 	Menu sn_menu ((char*)"Velocity");
-	sn_menu.add ((char*)"Quick", quick)
+	sn_menu.add((char*)"Instant", instant)
+		   .add ((char*)"Quick", quick)
 		   .add ((char*)"Normal",normal)
 		   .add ((char*)"Slow",slow)
 		   .add ((char*)"Very slow",very_slow);
