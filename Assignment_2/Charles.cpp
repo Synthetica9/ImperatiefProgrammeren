@@ -171,6 +171,7 @@ void rondje_om_de_kerk() {
 }
 
 void go_to_middle_of_world() {
+	go_to_north_west_corner();
 	for (int i = 0; i <= (WereldBreedte / 2); i++)
 		step();
 	turn_right();
