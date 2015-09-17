@@ -11,9 +11,11 @@ const double epsilon = 0.001;
 int inclusion(double v) {
 	int i = 0;
 	int n = 0;
-	do {
+	while (n * n <= v) {
 		n++;
-	} while (n * n <= v);
+		i++;
+		std::cout << i << '\t' << n << std::endl;
+	}
 
 	if (n*n > v) {
 		n--;
@@ -23,7 +25,7 @@ int inclusion(double v) {
 	double x = (a + b) / 2;
 	while (abs(x * x - v) > epsilon) {
 		i++;
-		std::cout << i << ' ' << x << std::endl;
+		std::cout << i << '\t' << x << std::endl;
 		if (x * x < v) {
 			a = x;
 		}
@@ -69,7 +71,7 @@ int newtonraphson(double v) {
 	while (f(x,v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
-		std::cout << i << ' ' << x << std::endl;
+		std::cout << i << '\t' << x << std::endl;
 	}
 	return i;
 }
@@ -110,7 +112,8 @@ void convert_bases(){
 	std::cout << std::endl;
 }
 int main() {
-	std::cout << "1. Compare methods for calculating a square root" << std::endl <<
+	std::cout << 
+		"1. Compare methods for calculating a square root" << std::endl <<
 		"2. Factorize an integer" << std::endl <<
 		"3. Convert numbers between bases" <<std::endl;
 	int choice = 0;
@@ -125,7 +128,8 @@ int main() {
 	int n;
 	switch (choice) {
 		case 1:
-			std::cout << "Comparing the Newton-Ralphson method and the inclusion method " << std::endl <<
+			std::cout << 
+				"Comparing the Newton-Ralphson method and the inclusion method " << std::endl <<
 				"Enter a number to compare the number of steps required to compute it:";
 			double v;
 			std::cin >> v;
@@ -133,15 +137,15 @@ int main() {
 			a = newtonraphson(v);
 			std::cout << std::endl << "Inclusion" << std::endl;
 			b = inclusion(v);
-			std::cout << "Number of steps for the Newton-Ralphson method: " << a << std::endl <<
+			std::cout << 
+				"Number of steps for the Newton-Ralphson method: " << a << std::endl <<
 				"Number of steps for the inclusion method: " << b << std::endl;
-			
-
 			break;
 		case 2:
 			std::cout << "Enter an integer to factorize: ";
 			std::cin >> n;
 			factorize(n);
+			break;
 		case 3:
 			convert_bases();
 			break;
