@@ -23,7 +23,7 @@ int inclusion(double v) {
 	double x = (a + b) / 2;
 	while (abs(x * x - v) > epsilon) {
 		i++;
-		std::cout << i << ' ' << x << '\n';
+		std::cout << i << ' ' << x << std::endl;
 		if (x * x < v) {
 			a = x;
 		}
@@ -52,7 +52,7 @@ void factorize(int n) {
 			i++;
 		}
 	}
-	std::cout << '\n';
+	std::cout << std::endl;
 }
 
 double f(double x, double v) {
@@ -69,7 +69,7 @@ int newtonraphson(double v) {
 	while (f(x,v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
-		std::cout << i << ' ' << x << '\n';
+		std::cout << i << ' ' << x << std::endl;
 	}
 	return i;
 }
@@ -110,16 +110,41 @@ void convert_bases(){
 	std::cout << std::endl;
 }
 int main() {
-//	std::cout << "Comparing the Newton-Ralphson method and the inclusion method \n" <<
-//		"Enter a number to compare the number of steps required to compute it:";
-//	double v;
-//	std::cin >> v;
-//	std::cout << "\nNewton-Ralphson method:\n";
-//	int a = newtonraphson(v);
-//	std::cout << "\nInclusion";
-//	int b = inclusion(v);
-//	std::cout << "Number of steps for the Newton-Ralphson method: " << a << "\nNumber of steps for the inclusion method: " << b << '\n';
-//	
-	convert_bases();
+	std::cout << "1. Compare methods for calculating a square root" << std::endl <<
+		"2. Factorize an integer" << std::endl <<
+		"3. Convert numbers between bases" <<std::endl;
+	int choice = 0;
+	while (choice != 1 && choice != 2) {
+		std::cout << "Which one do you choose? ";
+		std::cin >> choice;
+		std::cout << std::endl;
+	}
+
+	int a;
+	int b;
+	int n;
+	switch (choice) {
+		case 1:
+			std::cout << "Comparing the Newton-Ralphson method and the inclusion method " << std::endl <<
+				"Enter a number to compare the number of steps required to compute it:";
+			double v;
+			std::cin >> v;
+			std::cout << std::endl << "Newton-Ralphson method:" << std::endl;
+			a = newtonraphson(v);
+			std::cout << std::endl << "Inclusion" << std::endl;
+			b = inclusion(v);
+			std::cout << "Number of steps for the Newton-Ralphson method: " << a << std::endl <<
+				"Number of steps for the inclusion method: " << b << std::endl;
+			
+
+			break;
+		case 2:
+			std::cout << "Enter an integer to factorize: ";
+			std::cin >> n;
+			factorize(n);
+		case 3:
+			convert_bases();
+			break;
+	}
 	return 0;
 }
