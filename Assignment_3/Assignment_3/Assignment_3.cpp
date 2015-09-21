@@ -17,7 +17,7 @@ int inclusion(double v) {
 		std::cout << i << '\t' << n << std::endl;
 	}
 
-	if (n*n > v) {
+	if (n * n > v) {
 		n--;
 	}
 	double a = static_cast<double>(n);
@@ -28,8 +28,7 @@ int inclusion(double v) {
 		std::cout << i << '\t' << x << std::endl;
 		if (x * x < v) {
 			a = x;
-		}
-		else {
+		} else {
 			b = x;
 		}
 		x = (a + b) / 2;
@@ -58,7 +57,7 @@ void factorize(int n) {
 }
 
 double f(double x, double v) {
-	return x*x - v;
+	return x * x - v;
 }
 
 double df(double x) {
@@ -68,7 +67,7 @@ double df(double x) {
 int newtonraphson(double v) {
 	int i = 0;
 	double x = (v > 1) ? v : 1;
-	while (f(x,v) >= epsilon) {
+	while (f(x, v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
 		std::cout << i << '\t' << x << std::endl;
@@ -78,7 +77,7 @@ int newtonraphson(double v) {
 
 const std::string bases = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-void convert_bases(){
+void convert_bases() {
 	int in_base;
 	std::cout << "Enter input base: ";
 	std::cin >> in_base;
@@ -90,13 +89,13 @@ void convert_bases(){
 	std::string in_number;
 	std::cout << "Enter input number: ";
 	std::cin >> in_number;
-	
+
 	int in_len = in_number.length();
 	int out_num = 0;
 	char current_char;
 	int current_mult = 1;
 	for (int i = 1; i <= in_len; i++) {
-		current_char = toupper(in_number[in_len - i ]);
+		current_char = toupper(in_number[in_len - i]);
 		out_num += current_mult * bases.find(current_char);
 		current_mult *= in_base;
 	}
@@ -111,11 +110,12 @@ void convert_bases(){
 		std::cout << out_number[i];
 	std::cout << std::endl;
 }
+
 int main() {
-	std::cout << 
+	std::cout <<
 		"1. Compare methods for calculating a square root" << std::endl <<
 		"2. Factorize an integer" << std::endl <<
-		"3. Convert numbers between bases" <<std::endl;
+		"3. Convert numbers between bases" << std::endl;
 	int choice = 0;
 	while (choice != 1 && choice != 2) {
 		std::cout << "Which one do you choose? ";
@@ -128,7 +128,7 @@ int main() {
 	int n;
 	switch (choice) {
 		case 1:
-			std::cout << 
+			std::cout <<
 				"Comparing the Newton-Ralphson method and the inclusion method " << std::endl <<
 				"Enter a number to compare the number of steps required to compute it:";
 			double v;
@@ -137,7 +137,7 @@ int main() {
 			a = newtonraphson(v);
 			std::cout << std::endl << "Inclusion" << std::endl;
 			b = inclusion(v);
-			std::cout << 
+			std::cout <<
 				"Number of steps for the Newton-Ralphson method: " << a << std::endl <<
 				"Number of steps for the inclusion method: " << b << std::endl;
 			break;
