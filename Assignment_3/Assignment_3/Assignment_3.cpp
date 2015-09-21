@@ -82,14 +82,14 @@ void factorize(int n) {
 	std::cout << n << " = ";
 	int i = 2;
 	int sqrt_n = calc_newtonraphson(n, local_epsilon);
-	// We won't find any prime factors above sqrt(n), so we store this whenever i is changed.
+	// We won't find any prime factors above sqrt(n), so we store this whenever n is changed.
 	while (n > 1 && i < sqrt_n) {
 		if (n % i == 0) {
 			output_factor(first_factor, i);
 			n = n / i;
+			sqrt_n = calc_newtonraphson(n, local_epsilon);
 		} else {
 			i++;
-			sqrt_n = calc_newtonraphson(n, local_epsilon);
 		}
 	}
 	if (n != 1) {
