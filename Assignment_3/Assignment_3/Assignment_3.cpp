@@ -1,43 +1,34 @@
 // Assignment_3.cpp : Defines the entry point for the console application.
-// Name / student number / study student 1 : Patrick Hilhorst / S4577434 / Computer Science
-// Name / student number / study student 2 : Fons van der Plas / S4576586 / Mathematics
+//
 
+#include "stdafx.h"
 #include <iostream>
 #include <cmath>
 #include <string>
 
-using namespace std;
-
 const double epsilon = 0.001;
 
-int inclusion(double v)
-{
+int inclusion(double v) {
 	int i = 0;
 	int n = 0;
-	while (n * n <= v)
-	{
+	while (n * n <= v) {
 		n++;
 		i++;
-		cout << i << '\t' << n << endl;
+		std::cout << i << '\t' << n << std::endl;
 	}
 
-	if (n * n > v)
-	{
+	if (n * n > v) {
 		n--;
 	}
 	double a = static_cast<double>(n);
 	double b = a + 1;
 	double x = (a + b) / 2;
-	while (abs(x * x - v) > epsilon)
-	{
+	while (abs(x * x - v) > epsilon) {
 		i++;
-		cout << i << '\t' << x << endl;
-		if (x * x < v)
-		{
+		std::cout << i << '\t' << x << std::endl;
+		if (x * x < v) {
 			a = x;
-		}
-		else
-		{
+		} else {
 			b = x;
 		}
 		x = (a + b) / 2;
@@ -45,139 +36,119 @@ int inclusion(double v)
 	return i;
 }
 
-void factorize(int n)
-{
+void factorize(int n) {
 	bool first_factor = true;
-	cout << n << " = ";
+	std::cout << n << " = ";
 	int i = 2;
-	while (n > 1)
-	{
-		if (n % i == 0)
-		{
-			if (!first_factor)
-			{
-				cout << " * ";
-			}
-			else
-			{
+	while (n > 1) {
+		if (n % i == 0) {
+			if (!first_factor) {
+				std::cout << " * ";
+			} else {
 				first_factor = false;
 			}
-			cout << i;
+			std::cout << i;
 			n = n / i;
-		}
-		else
-		{
+		} else {
 			i++;
 		}
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
-double f(double x, double v)
-{
+double f(double x, double v) {
 	return x * x - v;
 }
 
-double df(double x)
-{
+double df(double x) {
 	return 2 * x;
 }
 
-int newtonraphson(double v)
-{
+int newtonraphson(double v) {
 	int i = 0;
 	double x = (v > 1) ? v : 1;
-	while (f(x, v) >= epsilon)
-	{
+	while (f(x, v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
-		cout << i << '\t' << x << endl;
+		std::cout << i << '\t' << x << std::endl;
 	}
 	return i;
 }
 
-const string bases = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const std::string bases = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-void convert_bases()
-{
+void convert_bases() {
 	int in_base;
-	cout << "Enter input base: ";
-	cin >> in_base;
+	std::cout << "Enter input base: ";
+	std::cin >> in_base;
 
 	int out_base;
-	cout << "Enter output base: ";
-	cin >> out_base;
+	std::cout << "Enter output base: ";
+	std::cin >> out_base;
 
-	string in_number;
-	cout << "Enter input number: ";
-	cin >> in_number;
+	std::string in_number;
+	std::cout << "Enter input number: ";
+	std::cin >> in_number;
 
 	int in_len = in_number.length();
 	int out_num = 0;
 	char current_char;
 	int current_mult = 1;
-	for (int i = 1; i <= in_len; i++)
-	{
+	for (int i = 1; i <= in_len; i++) {
 		current_char = toupper(in_number[in_len - i]);
 		out_num += current_mult * bases.find(current_char);
 		current_mult *= in_base;
 	}
 	int current_last_digit;
-	string out_number = "";
-	while (out_num)
-	{
+	std::string out_number = "";
+	while (out_num) {
 		current_last_digit = out_num % out_base;
 		out_number += bases[current_last_digit];
 		out_num /= out_base;
 	}
 	for (int i = out_number.length() - 1; i >= 0; i--)
-	{
-		cout << out_number[i];
-	}
-	cout << endl;
+		std::cout << out_number[i];
+	std::cout << std::endl;
 }
 
-int main()
-{
-	cout <<
-		"1. Compare methods for calculating a square root" << endl <<
-		"2. Factorize an integer" << endl <<
-		"3. Convert numbers between bases" << endl;
+int main() {
+	std::cout <<
+		"1. Compare methods for calculating a square root" << std::endl <<
+		"2. Factorize an integer" << std::endl <<
+		"3. Convert numbers between bases" << std::endl;
 	int choice = 0;
-	while (choice != 1 && choice != 2 && choice != 3)
-	{
-		cout << "Which one do you choose? ";
-		cin >> choice;
-		cout << endl;
+	while (choice != 1 && choice != 2) {
+		std::cout << "Which one do you choose? ";
+		std::cin >> choice;
+		std::cout << std::endl;
 	}
 
 	int a;
 	int b;
 	int n;
-	switch (choice)
-	{
-	case 1:
-		cout <<
-			"Comparing the Newton-Ralphson method and the inclusion method " << endl <<
-			"Enter a number to compare the number of steps required to compute it:";
-		double v;
-		cin >> v;
-		cout << endl << "Newton-Ralphson method:" << endl;
-		a = newtonraphson(v);
-		cout << endl << "Inclusion" << endl;
-		b = inclusion(v);
-		cout <<
-			"Number of steps for the Newton-Ralphson method: " << a << endl <<
-			"Number of steps for the inclusion method: " << b << endl;
-		break;
-	case 2:
-		cout << "Enter an integer to factorize: ";
-		cin >> n;
-		factorize(n);
-		break;
-	case 3:
-		convert_bases();
-		break;
+	switch (choice) {
+		case 1:
+			std::cout <<
+				"Comparing the Newton-Ralphson method and the inclusion method " << std::endl <<
+				"Enter a number to compare the number of steps required to compute it:";
+			double v;
+			std::cin >> v;
+			std::cout << std::endl << "Newton-Ralphson method:" << std::endl;
+			a = newtonraphson(v);
+			std::cout << std::endl << "Inclusion" << std::endl;
+			b = inclusion(v);
+			std::cout <<
+				"Number of steps for the Newton-Ralphson method: " << a << std::endl <<
+				"Number of steps for the inclusion method: " << b << std::endl;
+			break;
+		case 2:
+			std::cout << "Enter an integer to factorize: ";
+			std::cin >> n;
+			factorize(n);
+			break;
+		case 3:
+			convert_bases();
+			break;
 	}
 	return 0;
 }
