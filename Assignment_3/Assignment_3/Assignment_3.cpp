@@ -7,7 +7,7 @@
 
 const double default_epsilon = 0.001;
 
-int inclusion(double v, double epsilon=default_epsilon) {
+int inclusion(double v, double epsilon = default_epsilon) {
 	int i = 0;
 	int n = 0;
 	while (n * n <= v) {
@@ -44,10 +44,10 @@ double df(double x) {
 }
 
 double max(double a, double b) {
-	return  (a > b) ? a : b;
+	return (a > b) ? a : b;
 }
 
-int newtonraphson(double v, double epsilon=default_epsilon) {
+int newtonraphson(double v, double epsilon = default_epsilon) {
 	int i = 0;
 	double x = max(v, 1);
 	while (f(x, v) >= epsilon) {
@@ -59,7 +59,7 @@ int newtonraphson(double v, double epsilon=default_epsilon) {
 }
 
 // Version of newtonraphson that actually calculates the value
-double calc_newtonraphson(double v, double epsilon=default_epsilon) {
+double calc_newtonraphson(double v, double epsilon = default_epsilon) {
 	double x = max(v, 1);
 	while (f(x, v) >= epsilon) {
 		x = x - (f(x, v) / df(x));
@@ -67,7 +67,7 @@ double calc_newtonraphson(double v, double epsilon=default_epsilon) {
 	return x;
 }
 
-void output_factor(bool& first_factor, int i) {
+void output_factor(bool &first_factor, int i) {
 	if (!first_factor) {
 		std::cout << " * ";
 	} else {
