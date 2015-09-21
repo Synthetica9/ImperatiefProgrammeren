@@ -43,13 +43,14 @@ double df(double x) {
 	return 2 * x;
 }
 
-double max(double a, double b) {
+template <typename type>
+type max(type a, type b) {
 	return (a > b) ? a : b;
 }
 
 int newtonraphson(double v, double epsilon = default_epsilon) {
 	int i = 0;
-	double x = max(v, 1);
+	double x = max(v, 1.0);
 	while (f(x, v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
@@ -60,7 +61,7 @@ int newtonraphson(double v, double epsilon = default_epsilon) {
 
 // Version of newtonraphson that actually calculates the value
 double calc_newtonraphson(double v, double epsilon = default_epsilon) {
-	double x = max(v, 1);
+	double x = max(v, 1.0);
 	while (f(x, v) >= epsilon) {
 		x = x - (f(x, v) / df(x));
 	}
