@@ -36,26 +36,6 @@ int inclusion(double v) {
 	return i;
 }
 
-void factorize(int n) {
-	bool first_factor = true;
-	std::cout << n << " = ";
-	int i = 2;
-	while (n > 1) {
-		if (n % i == 0) {
-			if (!first_factor) {
-				std::cout << " * ";
-			} else {
-				first_factor = false;
-			}
-			std::cout << i;
-			n = n / i;
-		} else {
-			i++;
-		}
-	}
-	std::cout << std::endl;
-}
-
 double f(double x, double v) {
 	return x * x - v;
 }
@@ -64,15 +44,59 @@ double df(double x) {
 	return 2 * x;
 }
 
+double max(double a, double b) {
+	return  (a > b) ? a : b;
+}
+
 int newtonraphson(double v) {
 	int i = 0;
-	double x = (v > 1) ? v : 1;
+	double x = max(v, 1);
 	while (f(x, v) >= epsilon) {
 		i++;
 		x = x - (f(x, v) / df(x));
 		std::cout << i << '\t' << x << std::endl;
 	}
 	return i;
+}
+
+// Version of newtonraphson that actually calculates the value
+double calc_newtonraphson(double v) {
+	double x = max(v, 1);
+	while (f(x, v) >= epsilon) {
+		x = x - (f(x, v) / df(x));
+	}
+	return x;
+}
+
+void output_factor(bool& first_factor, int i) {
+	if (!first_factor) {
+		std::cout << " * ";
+	} else {
+		first_factor = false;
+	}
+	std::cout << i;
+}
+
+void factorize(int n) {
+	bool first_factor = true;
+	std::cout << n << " = ";
+	int i = 2;
+	int sqrt_n = calc_newtonraphson(n);
+	// We won't find any prime factors above sqrt(n), so we store this whenever i is changed.
+	while (n > 1 && i < sqrt_n) {
+		if (n % i == 0) {
+			output_factor(first_factor, i);
+			n = n / i;
+		} else {
+			i++;
+			sqrt_n = calc_newtonraphson(n);
+		}
+	}
+	if (n != 1) {
+		//in case we terminated by exceeding the square root:
+		output_factor(first_factor, n);
+	}
+	std::cout << std::endl;
 }
 
 const std::string bases = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -117,7 +141,7 @@ int main() {
 		"2. Factorize an integer" << std::endl <<
 		"3. Convert numbers between bases" << std::endl;
 	int choice = 0;
-	while (choice != 1 && choice != 2) {
+	while (choice < 1 || choice > 3) {
 		std::cout << "Which one do you choose? ";
 		std::cin >> choice;
 		std::cout << std::endl;
