@@ -5,9 +5,9 @@
 #include <cmath>
 #include <string>
 
-const double epsilon = 0.001;
+const double default_epsilon = 0.001;
 
-int inclusion(double v) {
+int inclusion(double v, double epsilon=default_epsilon) {
 	int i = 0;
 	int n = 0;
 	while (n * n <= v) {
@@ -47,7 +47,7 @@ double max(double a, double b) {
 	return  (a > b) ? a : b;
 }
 
-int newtonraphson(double v) {
+int newtonraphson(double v, double epsilon=default_epsilon) {
 	int i = 0;
 	double x = max(v, 1);
 	while (f(x, v) >= epsilon) {
@@ -59,7 +59,7 @@ int newtonraphson(double v) {
 }
 
 // Version of newtonraphson that actually calculates the value
-double calc_newtonraphson(double v) {
+double calc_newtonraphson(double v, double epsilon=default_epsilon) {
 	double x = max(v, 1);
 	while (f(x, v) >= epsilon) {
 		x = x - (f(x, v) / df(x));
@@ -77,10 +77,11 @@ void output_factor(bool& first_factor, int i) {
 }
 
 void factorize(int n) {
+	double local_epsilon = 0.1; // No real need for precission here.
 	bool first_factor = true;
 	std::cout << n << " = ";
 	int i = 2;
-	int sqrt_n = calc_newtonraphson(n);
+	int sqrt_n = calc_newtonraphson(n, local_epsilon);
 	// We won't find any prime factors above sqrt(n), so we store this whenever i is changed.
 	while (n > 1 && i < sqrt_n) {
 		if (n % i == 0) {
@@ -88,7 +89,7 @@ void factorize(int n) {
 			n = n / i;
 		} else {
 			i++;
-			sqrt_n = calc_newtonraphson(n);
+			sqrt_n = calc_newtonraphson(n, local_epsilon);
 		}
 	}
 	if (n != 1) {
