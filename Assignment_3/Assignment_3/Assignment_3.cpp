@@ -22,7 +22,7 @@ int inclusion(double v) {
 	double a = static_cast<double>(n);
 	double b = a + 1;
 	double x = (a + b) / 2;
-	while (abs(x * x - v) > epsilon) {
+	while (std::abs(x * x - v) > epsilon) {
 		i++;
 		std::cout << i << '\t' << x << std::endl;
 		if (x * x < v) {
