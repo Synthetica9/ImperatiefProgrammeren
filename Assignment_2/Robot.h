@@ -49,8 +49,8 @@ const int SteenGrootte	= 6;
 const int BalGrootte	= 11;
 const int RobotGrootte	= 18;
 const int RandGrootte	= 12;
-const int WereldBreedte = 50;
-const int WereldHoogte	= 30;
+const int WereldBreedte = 100;
+const int WereldHoogte	= 60;
 
 const int SCREENWIDTH	= WereldBreedte * 2 * SteenGrootte + RandGrootte;
 const int SCREENHEIGHT	= WereldHoogte * 2 * SteenGrootte + RandGrootte;
