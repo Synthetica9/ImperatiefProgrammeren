@@ -1,9 +1,8 @@
 #include <iostream>
 
 bool is_leap_year(int year) {
-	return (year % 100 == 0) ? ((year / 100) % 4 != 0) : (year % 4 == 0);
+	return (year % 100 == 0) ? (year % 400 == 0) : (year % 4 == 0);
 };
-
 
 const int test_years[] = {
 	1900, 1999,
@@ -28,37 +27,26 @@ enum Month {
 };
 
 
-typedef struct date {
-	int day;
-	Month month;
-} date;
-
 int nr_of_days_in_month(int year, Month month) {
-	int result; //Best practice: single return point, not bloody 12
+	int result = -1; 
 	switch (month) {
-		case January: result = 31;
+		case February: 
+			result = 28 + is_leap_year(year);
 			break;
-		case February: result = is_leap_year(year) ? 29 : 28;
+		case January:
+		case March:
+		case May:
+		case July:
+		case August:
+		case October:
+		case December:
+			result = 31;
 			break;
-		case March: result = 31;
-			break;
-		case April: result = 30;
-			break;
-		case May: result = 31;
-			break;
-		case June: result = 30;
-			break;
-		case July: result = 31;
-			break;
-		case August: result = 30;
-			break;
-		case September: result = 30;
-			break;
-		case October: result = 31;
-			break;
-		case November: result = 30;
-			break;
-		case December: result = 31;
+		case April:
+		case June:
+		case September:
+		case November:
+			result = 30;
 			break;
 	}
 	return result;
@@ -98,10 +86,36 @@ int easter_day(int year) {
 	return day;
 }
 
+int day_number_in_year(int day, Month month, int year) {
+	int num_days = day;
+	for (int count_month = 1; count_month < month; count_month++)
+		num_days += nr_of_days_in_month(year, static_cast<Month>(count_month));
+	return num_days;
+}
+
+Month month_in_year_of_day_number (int day_number, int year) {
+	int m = 1;
+	while (
+		day_number_in_year(
+			nr_of_days_in_month(year, static_cast<Month>(m)),
+			static_cast<Month>(m), year) < day_number) {
+		m++;
+	}
+	return static_cast<Month>(m);
+}
+
+int day_in_month_of_day_number (int day_number, int year) {
+	return day_number - day_number_in_year(
+		1, month_in_year_of_day_number(day_number, year), year) + 1; 
+}
+
 int main() {
 	for (int year: test_years) {
-		std::cout 
-			<< year << ':' << is_leap_year(year) 
-			<< ", " << easter_day(year) << '-' << easter_month(year) << std::endl;
+		int e_day = easter_day(year);
+		Month e_month = easter_month(year);
+		std::cout
+			<< year << ':' << is_leap_year(year)
+			<< ", " << e_day << '-' << e_month << ' '
+			<< day_number_in_year(e_day, e_month, year) << std::endl;
 	}
 }
