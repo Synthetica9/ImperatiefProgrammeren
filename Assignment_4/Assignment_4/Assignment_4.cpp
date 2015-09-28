@@ -31,7 +31,7 @@ enum Month
 	December
 };
 
-string month_names[]{
+const string month_names[] = {
 	"January", 
 	"February", 
 	"March", 
@@ -72,6 +72,7 @@ int nr_of_days_in_month(int year, Month month)
 	}
 	return result;
 }
+
 
 Month easter_month(int year)
 {
@@ -134,20 +135,35 @@ Month month_in_year_of_day_number(int day_number, int year)
 int day_in_month_of_day_number(int day_number, int year)
 {
 	return day_number - day_number_in_year(
-		0, month_in_year_of_day_number(day_number, year), year) + 1;
+		0, month_in_year_of_day_number(day_number, year), year);
 }
 
 string get_month_name(Month month) {
 	return month_names[month - 1];
 }
 
-void output_day(int day, Month month) {
-	cout << day << ' ' << get_month_name(month) << endl;
+string get_date_string(int day, Month month) {
+	return to_string(day) + ' ' + get_month_name(month);
 }
 
-void output_day_by_number(int day_number, int year) {
-	output_day(day_in_month_of_day_number(day_number, year), month_in_year_of_day_number(day_number, year));
+string get_date_string_by_day_number(int day, int year) {
+	return get_date_string(
+		day_in_month_of_day_number(day, year),
+		month_in_year_of_day_number(day, year));
 }
+
+struct Event {
+	int easter_offset;
+	string name;
+};
+
+const Event holy_days[] = {
+	{-47, "Carnival"},
+	{-2, "Good Friday"},
+	{0, "Easter"},
+	{39, "Ascension Day"},
+	{49, "Whitsuntide"}
+};
 
 void show_holy_days() {
 	cout << "Enter year: ";
@@ -155,26 +171,14 @@ void show_holy_days() {
 	cin >> year;
 	cout << endl << "Holy days in " << year << endl;
 	Month e_month = easter_month(year);
-	int e_month_day = easter_month(year);
+	int e_month_day = easter_day(year);
 	int e_day = day_number_in_year(e_month_day, e_month, year);
 
-	cout << "New Year: ";
-	output_day_by_number(1, year);
-
-	cout << "Carnival: ";
-	output_day_by_number(e_day - 47, year);
-
-	cout << "Good Friday: ";
-	output_day_by_number(e_day - 2, year);
-
-	cout << "Easter: ";
-	output_day_by_number(e_day, year);
-
-	cout << "Ascension Day: ";
-	output_day_by_number(e_day + 39, year);
-
-	cout << "Whitsuntide: ";
-	output_day_by_number(e_day + 49, year); 
+	for (Event holy_day : holy_days) {
+		cout 
+			<< holy_day.name << ": " 
+			<< get_date_string_by_day_number(e_day + holy_day.easter_offset, year) << endl;
+	}
 }
 
 
@@ -225,10 +229,13 @@ int main()
 	{
 		int e_day = easter_day(year);
 		Month e_month = easter_month(year);
+//		cout
+//			<< year << ':' << is_leap_year(year)
+//			<< ", " << e_day << '-' << e_month << ' '
+//			<< day_number_in_year(e_day, e_month, year) << endl;
 		cout
-			<< year << ':' << is_leap_year(year)
-			<< ", " << e_day << '-' << e_month << ' '
-			<< day_number_in_year(e_day, e_month, year) << endl;
+			<< year << " is " << (is_leap_year(year) ? "not " : "") << "a leap year. "
+			<< "Easter is on " << get_date_string(e_day, e_month) << '.' << endl;
 	}
 
 	show_holy_days();
