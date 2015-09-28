@@ -31,7 +31,20 @@ enum Month
 	December
 };
 
-string month_names[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+string month_names[]{
+	"January", 
+	"February", 
+	"March", 
+	"April", 
+	"May", 
+	"June", 
+	"July", 
+	"August", 
+	"September", 
+	"October",
+	"November", 
+	"December"
+};
 
 int nr_of_days_in_month(int year, Month month)
 {
@@ -117,15 +130,58 @@ Month month_in_year_of_day_number(int day_number, int year)
 	return static_cast<Month>(m);
 }
 
+
 int day_in_month_of_day_number(int day_number, int year)
 {
 	return day_number - day_number_in_year(
-		1, month_in_year_of_day_number(day_number, year), year) + 1;
+		0, month_in_year_of_day_number(day_number, year), year) + 1;
 }
+
+string get_month_name(Month month) {
+	return month_names[month - 1];
+}
+
+void output_day(int day, Month month) {
+	cout << day << ' ' << get_month_name(month) << endl;
+}
+
+void output_day_by_number(int day_number, int year) {
+	output_day(day_in_month_of_day_number(day_number, year), month_in_year_of_day_number(day_number, year));
+}
+
+void show_holy_days() {
+	cout << "Enter year: ";
+	int year;
+	cin >> year;
+	cout << endl << "Holy days in " << year << endl;
+	Month e_month = easter_month(year);
+	int e_month_day = easter_month(year);
+	int e_day = day_number_in_year(e_month_day, e_month, year);
+
+	cout << "New Year: ";
+	output_day_by_number(1, year);
+
+	cout << "Carnival: ";
+	output_day_by_number(e_day - 47, year);
+
+	cout << "Good Friday: ";
+	output_day_by_number(e_day - 2, year);
+
+	cout << "Easter: ";
+	output_day_by_number(e_day, year);
+
+	cout << "Ascension Day: ";
+	output_day_by_number(e_day + 39, year);
+
+	cout << "Whitsuntide: ";
+	output_day_by_number(e_day + 49, year); 
+}
+
 
 void show_month(Month month, int year)
 {
-	// The starting day is derived from January 1st 1970, by adding or substracting 365 or 366 to the starting day, and returning the result to [0,6] integer space
+	// The starting day is derived from January 1st 1970, by adding or substracting 365 or 366 to the starting day, and returning 
+	// the result to [0,6] integer space
 	int first_day_in_week = (3 + day_number_in_year(0, month, year)) % 7;; // January 1st 1970 is on a Thursday = 3 (Monday = 0)
 	if (year >= 1970)
 	{
@@ -143,8 +199,7 @@ void show_month(Month month, int year)
 		first_day_in_week += first_day_in_week < 0 ? 7 : 0; // Make the result positive: [0,6]
 	}
 
-	//std::cout << month << " " << year; //TODO: display month as string (January instead of 1)
-	cout << month_names[month - 1] << " " << year;
+	cout << get_month_name(month) << " " << year;
 	// Every day of the week is contained in a single tab
 	cout << endl << "Mo\tTu\tWe\tTh\tFr\tSa\tSu" << endl;
 	for (int i = 0; i < first_day_in_week; i++) // Skip the days before the 1st
@@ -176,7 +231,9 @@ int main()
 			<< day_number_in_year(e_day, e_month, year) << endl;
 	}
 
-	cout << "\nShow month:\nEnter year: ";
+	show_holy_days();
+
+	cout << endl << "Show month:" << endl << "Enter year: ";
 	int year_input = -1;
 	cin >> year_input;
 	cout << "Enter month number:";
