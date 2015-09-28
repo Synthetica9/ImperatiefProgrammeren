@@ -73,43 +73,6 @@ int nr_of_days_in_month(int year, Month month)
 	return result;
 }
 
-
-Month easter_month(int year)
-{
-	int a = year % 19;
-	int b = year / 100;
-	int c = year % 100;
-	int d = b / 4;
-	int e = b % 4;
-	int f = (b + 8) / 25;
-	int g = (b - f + 1) / 3;
-	int h = (19 * a + b - d - g + 15) % 30;
-	int i = c / 4;
-	int k = c % 4;
-	int l = (32 + 2 * e + 2 * i - h - k) % 7;
-	int m = (a + 11 * h + 22 * l) / 451;
-	int month = (h + l - 7 * m + 114) / 31;
-	return Month(month);
-}
-
-int easter_day(int year)
-{
-	int a = year % 19;
-	int b = year / 100;
-	int c = year % 100;
-	int d = b / 4;
-	int e = b % 4;
-	int f = (b + 8) / 25;
-	int g = (b - f + 1) / 3;
-	int h = (19 * a + b - d - g + 15) % 30;
-	int i = c / 4;
-	int k = c % 4;
-	int l = (32 + 2 * e + 2 * i - h - k) % 7;
-	int m = (a + 11 * h + 22 * l) / 451;
-	int day = ((h + l - 7 * m + 114) % 31) + 1;
-	return day;
-}
-
 int day_number_in_year(int day, Month month, int year)
 {
 	int num_days = day;
@@ -136,6 +99,34 @@ int day_in_month_of_day_number(int day_number, int year)
 {
 	return day_number - day_number_in_year(
 		0, month_in_year_of_day_number(day_number, year), year);
+}
+
+int easter_day_in_year(int year) {
+	int a = year % 19;
+	int b = year / 100;
+	int c = year % 100;
+	int d = b / 4;
+	int e = b % 4;
+	int f = (b + 8) / 25;
+	int g = (b - f + 1) / 3;
+	int h = (19 * a + b - d - g + 15) % 30;
+	int i = c / 4;
+	int k = c % 4;
+	int l = (32 + 2 * e + 2 * i - h - k) % 7;
+	int m = (a + 11 * h + 22 * l) / 451;
+	int day = ((h + l - 7 * m + 114) % 31) + 1;
+	Month month = static_cast<Month>((h + l - 7 * m + 114) / 31);
+	return day_number_in_year(day, month, year);
+}
+
+Month easter_month(int year)
+{
+	return month_in_year_of_day_number(easter_day_in_year(year), year);
+}
+
+int easter_day(int year)
+{
+	return day_in_month_of_day_number(easter_day_in_year(year), year);
 }
 
 string get_month_name(Month month) {
