@@ -1,3 +1,7 @@
+// Assignment 4
+// Name / student number / study student 1 : Patrick Hilhorst / S4577434 / Computer Science
+// Name / student number / study student 2 : Fons van der Plas / S4576586 / Mathematics
+
 #include <string>
 #include <iostream>
 
