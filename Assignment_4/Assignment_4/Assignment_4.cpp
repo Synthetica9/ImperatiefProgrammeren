@@ -81,7 +81,7 @@ int day_number_in_year(int day, Month month, int year)
 {
 	int num_days = day;
 	for (int count_month = 1; count_month < month; count_month++)
-		num_days += nr_of_days_in_month(year, static_cast<Month>(count_month));
+		num_days += nr_of_days_in_month(year, Month(count_month));
 	return num_days;
 }
 
@@ -90,12 +90,12 @@ Month month_in_year_of_day_number(int day_number, int year)
 	int m = 1;
 	while (
 		day_number_in_year(
-			nr_of_days_in_month(year, static_cast<Month>(m)),
-			static_cast<Month>(m), year) < day_number)
+			nr_of_days_in_month(year, Month(m)),
+			Month(m), year) < day_number)
 	{
 		m++;
 	}
-	return static_cast<Month>(m);
+	return Month(m);
 }
 
 
@@ -119,7 +119,7 @@ int easter_day_in_year(int year) {
 	int l = (32 + 2 * e + 2 * i - h - k) % 7;
 	int m = (a + 11 * h + 22 * l) / 451;
 	int day = ((h + l - 7 * m + 114) % 31) + 1;
-	Month month = static_cast<Month>((h + l - 7 * m + 114) / 31);
+	Month month = Month((h + l - 7 * m + 114) / 31);
 	return day_number_in_year(day, month, year);
 }
 
@@ -160,21 +160,28 @@ const Event holy_days[] = {
 	{49, "Whitsuntide"}
 };
 
-void show_holy_days() {
-	cout << "Enter year: ";
-	int year;
-	cin >> year;
+void internal_show_holy_days(int year) {
 	cout << endl << "Holy days in " << year << endl;
 	Month e_month = easter_month(year);
 	int e_month_day = easter_day(year);
 	int e_day = day_number_in_year(e_month_day, e_month, year);
 
 	for (Event holy_day : holy_days) {
-		cout 
-			<< holy_day.name << ": " 
+		cout
+			<< holy_day.name << ": "
 			<< get_date_string_by_day_number(e_day + holy_day.easter_offset, year) << endl;
 	}
 }
+
+
+void show_holy_days() {
+	cout << "Enter year: ";
+	int year;
+	cin >> year;
+	internal_show_holy_days(year);
+}
+
+
 
 
 void show_month(Month month, int year)
@@ -203,7 +210,7 @@ void show_month(Month month, int year)
 	cout << endl << "Mo\tTu\tWe\tTh\tFr\tSa\tSu" << endl;
 	for (int i = 0; i < first_day_in_week; i++) // Skip the days before the 1st
 	{
-		cout << "\t";
+		cout << '\t';
 	}
 
 	for (int n = 1; n <= nr_of_days_in_month(year, month); n++)
@@ -220,17 +227,10 @@ void show_month(Month month, int year)
 int main()
 {
 	cout << "Test years:" << endl;
-	for (int year : test_years)
-	{
-		int e_day = easter_day(year);
-		Month e_month = easter_month(year);
-//		cout
-//			<< year << ':' << is_leap_year(year)
-//			<< ", " << e_day << '-' << e_month << ' '
-//			<< day_number_in_year(e_day, e_month, year) << endl;
-		cout
-			<< year << " is " << (is_leap_year(year) ? "not " : "") << "a leap year. "
-			<< "Easter is on " << get_date_string(e_day, e_month) << '.' << endl;
+	for (int year : test_years) {
+		cout << year << " is " << (is_leap_year(year) ? "" : "not ") << "a leap year.";
+		internal_show_holy_days(year);
+		cout << endl;
 	}
 
 	show_holy_days();
