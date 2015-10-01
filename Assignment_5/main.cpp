@@ -32,6 +32,18 @@ int next_pseudo_random_number() {
 	return next ;
 }
 
+template <typename T>
+bool get_input(T &out_var) {
+	cin >> out_var;
+	if (!cin) {
+		cin.clear();
+		cin.ignore(1000, '\n');
+		return false;
+	} else {
+		return true;
+	}
+}
+
 char rotate(char a, int r, Action e) {
 	//  Pre-condition:
 //	assert(r > 0 && r <= 65536 && a >= 0);
@@ -39,8 +51,8 @@ char rotate(char a, int r, Action e) {
 	assert(r <= 65536);
 //	assert(a > 0);
 	//  Post-condition:
-	// char a is rotated by r mod 128-32 places,
-	// char a is a control character iff it were one initially
+	// char b is char a rotated by r mod 128-32 places iff it is not a control character,
+	// char b is char a iff it were a control character
 	char b;
 	if (a < 32) {
 		b = a;
@@ -66,12 +78,16 @@ void test_rotate() {
 	int r;
 	while (true) {
 		cout << "Enter a value for r: ";
-		cin >> r;
-		if (r < 0) {
-			break;
-		}
-		for (char a = 32; a < 127; a++) {
-			cout << a << ' ' << rotate(a, r, Encrypt) << ' ' << rotate(rotate(a, r, Encrypt), r, Decrypt) << endl;
+		if (get_input(r)) {
+			if (r < 0) {
+				break;
+			}
+			for (char a = 32; a < 127; a++) {
+				cout << a << ' ' << rotate(a, r, Encrypt) << ' ' << rotate(rotate(a, r, Encrypt), r, Decrypt) << endl;
+			}
+		} else {
+			// Something went wrong reading from stdin
+			cout << "Malformed number!" << endl;
 		}
 	}
 }
@@ -83,22 +99,24 @@ bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 	// The two files will be open if the output is True.
 	// if the output is False, something went wrong and the output files aren't open
 	string infile_name, outfile_name;
-	cout << "Enter infile name: ";
-	cin >> infile_name;
-	cout << "Enter outfile name: ";
-	cin >> outfile_name;
+	do 
+		cout << "Enter infile name: ";
+	while (!get_input(infile_name));
+
+	do 
+		cout << "Enter outfile name: ";
+	while(!get_input(outfile_name));
 
 	infile.open(infile_name);
 	outfile.open(outfile_name);
 
-	bool status;
+	bool status = infile && outfile;
 
-	if (infile && outfile) {
+
+	if (status) {
 		cout << "Files opened succesfully" << endl;
-		status = true;
 	} else {
 		cout << "Error while opening files" << endl;
-		status = false;
 		infile.close();
 		outfile.close();
 		infile.clear();
@@ -125,8 +143,7 @@ void one_time_pad() {
 	
 	do {
 		cout << "Select a mode; 0 = Encrypt, 1 = Decrypt: ";
-		cin >> mode_select;
-	} while (mode_select != 0 && mode_select != 1);
+	} while (!get_input(mode_select) || mode_select < 0 || mode_select > 1);
 
 	if (mode_select == 0)
 		mode = Encrypt;
@@ -139,13 +156,16 @@ void one_time_pad() {
 
 	ifstream infile;
 	ofstream outfile;
-	open_input_and_output_file(infile, outfile);
-	int r;
-	cout << "Enter a value for r: ";
-	cin >> r;
-	do_one_time_pad(mode, infile, outfile, r);
-	infile.close();
-	outfile.close();
+	if (open_input_and_output_file(infile, outfile)) {
+		int r;
+		do
+			cout << "Enter a value for r: ";
+		while (!get_input(r));
+		do_one_time_pad(mode, infile, outfile, r);
+		cout << "Done!" << endl;
+		infile.close();
+		outfile.close();
+	}
 }
 
 // Read the file into memory for speed:
@@ -208,20 +228,20 @@ int main() {
 			<< "3: Crack the secret code!" << endl
 			<< "4: Quit." << endl
 			<< "Your choice? ";
-		cin >> choice;
-		if (choice == 1)
-			test_rotate();
-		else if (choice == 2)
-			one_time_pad();
-		else if (choice == 3)
-			secret();
-		else if (choice == 4)
-			// We don't need to break, because of the condition of the loop
-			cout << "Bye!" << endl;
-		else {
-			cout << "Come again?" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
+		if (get_input(choice)) {
+			if (choice == 1)
+				test_rotate();
+			else if (choice == 2)
+				one_time_pad();
+			else if (choice == 3)
+				secret();
+			else if (choice == 4)
+				// We don't need to break, because of the condition of the loop
+				cout << "Bye!" << endl;
+			else
+				cout << "Come again?" << endl;
+		} else {
+			cout << "Malformed number!" << endl;
 		}
 	}
 	return 0;
