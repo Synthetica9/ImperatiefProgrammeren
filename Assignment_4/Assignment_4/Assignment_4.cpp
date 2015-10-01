@@ -91,7 +91,8 @@ Month month_in_year_of_day_number(int day_number, int year) {
 	while (
 		day_number_in_year(
 			nr_of_days_in_month(year, Month(m)),
-			Month(m), year) < day_number) {
+			Month(m), year) 
+		< day_number) {
 		m++;
 	}
 	return Month(m);
@@ -188,7 +189,7 @@ void show_holy_days() {
 void show_month(Month month, int year) {
 	// The starting day is derived from January 1st 1970, by adding or substracting 365 or 366 to the starting day, and returning 
 	// the result to [0,6] integer space
-	int first_day_in_week = (3 + day_number_in_year(0, month, year)) % 7;; // January 1st 1970 is on a Thursday = 3 (Monday = 0)
+	int first_day_in_week = (3 + day_number_in_year(0, month, year)) % 7; // January 1st 1970 is on a Thursday = 3 (Monday = 0)
 	if (year >= 1970) {
 		for (int i = 1970; i < year; i++) {
 			first_day_in_week = (first_day_in_week + 365 + is_leap_year(i)) % 7;
