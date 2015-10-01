@@ -70,7 +70,7 @@ void test_rotate() {
 		if (r < 0) {
 			break;
 		}
-		for (char a = 0; a < 127; a++) {
+		for (char a = 32; a < 127; a++) {
 			cout << a << ' ' << rotate(a, r, Encrypt) << ' ' << rotate(rotate(a, r, Encrypt), r, Decrypt) << endl;
 		}
 	}
@@ -110,11 +110,12 @@ bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 void do_one_time_pad(Action mode, ifstream& infile, ofstream& outfile, int r) {
 	initialise_pseudo_random(r);
 	char current_char;
-	
+	char plain;
 	while (infile) {
 		infile.get(current_char);
-		outfile.put(rotate(current_char, next_pseudo_random_number(), mode));
-		cout << current_char;
+		plain = rotate(current_char, next_pseudo_random_number(), mode);
+		outfile.put(plain);
+//		cout << plain;
 	}
 }
 
@@ -188,11 +189,37 @@ void secret() {
 			best_key = key;
 		}
 	}
-	cout << best_key;
+	cout << "The best key: " << best_key << endl;
+	ifstream infile;
+	ofstream outfile;
+	infile.open("secret.txt");
+	outfile.open("source.txt");
+	do_one_time_pad(Decrypt, infile, outfile, best_key);
+	infile.close();
+	outfile.close();
 }
 
 int main() {
-	one_time_pad();
-//	secret();
+	int choice = -1;
+	while (choice != 4) {
+		cout
+			<< "1: Test the rotation function" << endl
+			<< "2: En- or decrypt a file." << endl
+			<< "3: Crack the secret code!" << endl
+			<< "4: Quit." << endl
+			<< "Your choice? ";
+		cin >> choice;
+		if (choice == 1)
+			test_rotate();
+		else if (choice == 2)
+			one_time_pad();
+		else if (choice == 3)
+			secret();
+		else if (choice == 4)
+			// We don't need to break, because of the condition of the loop
+			cout << "Bye!" << endl;
+		else
+			cout << "Come again? " << endl;
+	}
 	return 0;
 }
