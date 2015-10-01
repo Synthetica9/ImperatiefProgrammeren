@@ -218,8 +218,11 @@ int main() {
 		else if (choice == 4)
 			// We don't need to break, because of the condition of the loop
 			cout << "Bye!" << endl;
-		else
-			cout << "Come again? " << endl;
+		else {
+			cout << "Come again?" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+		}
 	}
 	return 0;
 }
