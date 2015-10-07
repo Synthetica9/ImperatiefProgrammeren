@@ -165,12 +165,12 @@ void one_time_pad() {
 }
 
 // Read the file into memory for speed:
-string read_file(string filename) {
+string read_file(string filename, int chars = -1) {
 	ifstream infile;
 	infile.open(filename);
 	string return_string = "";
 	char current_char;
-	while(infile) {
+	for (int chars_to_read = chars; chars != 0 && infile; chars--) {
 		infile.get(current_char);
 		//cout << current_char;
 		return_string += current_char;
@@ -185,13 +185,13 @@ void secret() {
 	// We'll hunt for spaces, because they are the most common characters in most texts
 	int best_key = 0;
 	int best_spaces = 0;
-	string input_string = read_file("secret.txt");
+	string input_string = read_file("secret.txt", 1000);
 	for(int key = 1; key < 65535; key++) {
 		initialise_pseudo_random(key);
 		int num_spaces = 0;
 
 		// It is not necessary to analyze the entire text. Analyzing ~1000 characters is sufficient.
-		for(int i = 0; i < min(int(input_string.length()), 1000); i++)
+		for(int i = 0; i < int(input_string.length()); i++)
 		{
 			if(rotate(input_string[i], next_pseudo_random_number(), Decrypt) == ' ') {
 				num_spaces++;
