@@ -37,6 +37,12 @@ int next_pseudo_random_number() {
 
 template <typename T>
 bool get_input(T &out_var) {
+	// Pre-condition:
+	assert(true);
+	/* Post-condition:
+	-	out_var contains the value inputted on stdin by the user
+	-	return is true when the read was successful, false otherwise.
+	*/
 	cin >> out_var;
 	if(!cin) {
 		cin.clear();
@@ -50,8 +56,8 @@ char rotate(char a, int r, Action e) {
 	//  Pre-condition:
 	assert(r >= 0 && r <= 65536);
 	/*  Post-condition:
-	Result is char a rotated by r mod 128-32 places iff it is not a control character,
-	Result is char a iff it is a control character. */
+	-	Result is char a rotated by r mod 128-32 places iff it is not a control character,
+	-	Result is char a iff it is a control character. */
 	char b;
 	if(a < 32) {
 		b = a;
@@ -74,13 +80,13 @@ void test_rotate() {
 	//  Pre-condition:
 	assert(true);
 	/*  Post-condition:
-	For non-negative values the function emits for each ASCII display character a, a line of output containing: 
-	the character a, 
-	the value of rotate(a, r, Encrypt), and 
-	the value of rotate(rotate(a, r, Encrypt), r, Decrypt). 
-	
-	The last value should always be equal to the first value, and the second value is always different 
-	except when r is a multiple of (128-32). */
+	-	For non-negative values the function emits for each ASCII display character
+		a, a line of output containing: 
+		-	the character a, 
+		-	the value of rotate(a, r, Encrypt), and 
+		-	the value of rotate(rotate(a, r, Encrypt), r, Decrypt). 
+		The last value should always be equal to the first value, and the second
+		value is always different except when r is a multiple of (128-32). */
 	int r;
 	while(true) {
 		cout << "Enter a value for r: ";
@@ -89,7 +95,10 @@ void test_rotate() {
 				break;
 			}
 			for(char a = 32; a < 127; a++) {
-				cout << a << ' ' << rotate(a, r, Encrypt) << ' ' << rotate(rotate(a, r, Encrypt), r, Decrypt) << endl;
+				cout 
+					<< a << ' ' 
+					<< rotate(a, r, Encrypt) << ' ' 
+					<< rotate(rotate(a, r, Encrypt), r, Decrypt) << endl;
 			}
 		} else {
 			// Something went wrong reading from stdin
@@ -102,8 +111,10 @@ bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 	//  Pre-condition:
 	assert(!infile.is_open() && !outfile.is_open());
 	/*  Post-condition:
-	Result is true if both files opened succesfully,
-	result is false if opening both files failed. */
+	-	Result is true if both files opened succesfully,
+		result is false if opening both files failed.
+	-	Both files are not in an "error condition" (bool(infile) && bool(outfile)).
+	-	Both files are either open, or they are both closed*/
 	string infile_name, outfile_name;
 	do
 		cout << "Enter infile name: ";
@@ -129,6 +140,14 @@ bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 }
 
 void do_one_time_pad(Action mode, ifstream& infile, ofstream& outfile, int r) {
+	//  Pre-condition:
+	assert(infile.is_open() && outfile.is_open()); // The value for r is checked in initialise_pseudo_random(r)
+	/*  Post-condition:
+	-	infile is at the end of the file being read
+	-	outfile contains the de-/encrypted contents of infile
+	-	infile is in an "error condition" (!bool(infile))
+	*/
+
 	initialise_pseudo_random(r);
 	char current_char;
 	char plain;
@@ -141,6 +160,11 @@ void do_one_time_pad(Action mode, ifstream& infile, ofstream& outfile, int r) {
 }
 
 void one_time_pad() {
+	// Pre-condition:
+	assert(true);
+	/* Post-condition:
+	-	A file has been written somewhere
+	*/
 	Action mode;
 	int mode_select = -1;
 
@@ -166,6 +190,17 @@ void one_time_pad() {
 
 // Read the file into memory for speed:
 string read_file(string filename, int chars = -1) {
+	// Pre-condition:
+	assert(true);
+	/* Post-condition:
+	-	The return is:
+		-	A string containg the full contents of the file with name "filename", 
+			if "chars" was less than zero or more than the lenght of the file
+		-	An empty string, if the file was empty or "chars" was 0
+		-	A string of lenght "chars", when the content of the file was longer 
+			than or equal to "chars"
+	-	How many characters were actually read is visible on stdout
+	*/
 	ifstream infile;
 	infile.open(filename);
 	string return_string = "";
@@ -182,10 +217,16 @@ string read_file(string filename, int chars = -1) {
 
 
 void secret() {
+	// Pre-condition:
+	assert(true);
+	/* Post-condtion:
+	-	The key that yields the most spaces is outputted to stdout
+	-	The file "secret.txt" is read and the decrypted contents are dumped to "source.txt"
+	*/
 	// We'll hunt for spaces, because they are the most common characters in most texts
 	int best_key = 0;
 	int best_spaces = 0;
-	string input_string = read_file("secret.txt", 1000);
+	string input_string = read_file("secret.txt", 500);
 	for(int key = 1; key < 65535; key++) {
 		initialise_pseudo_random(key);
 		int num_spaces = 0;
@@ -215,6 +256,10 @@ void secret() {
 }
 
 int main() {
+	// Pre-condition:
+	assert(true);
+	// Post-condtion:
+	// Something (possibly) happened
 	int choice = -1;
 	while(choice != 4) {
 		cout
