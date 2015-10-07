@@ -18,6 +18,7 @@ void initialise_pseudo_random(int r) {
 	seed = r ;
 }
 
+
 int next_pseudo_random_number() {
 	//  pre-condition:
 	assert (seed > 0 && seed <= 65536) ;
@@ -32,6 +33,7 @@ int next_pseudo_random_number() {
 	return next ;
 }
 
+
 template <typename T>
 bool get_input(T &out_var) {
 	cin >> out_var;
@@ -43,6 +45,7 @@ bool get_input(T &out_var) {
 		return true;
 	}
 }
+
 
 char rotate(char a, int r, Action e) {
 	//  Pre-condition:
@@ -69,6 +72,7 @@ char rotate(char a, int r, Action e) {
 	return b;
 }
 
+
 const int test_r[] = { 1, 42, 96, 65535 };
 void test_rotate() {
 	//  Pre-conditie:
@@ -91,6 +95,7 @@ void test_rotate() {
 		}
 	}
 }
+
 
 bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 	//  Pre-conditie:
@@ -125,6 +130,7 @@ bool open_input_and_output_file(ifstream &infile, ofstream &outfile) {
 	return status;
 }
 
+
 void do_one_time_pad(Action mode, ifstream& infile, ofstream& outfile, int r) {
 	initialise_pseudo_random(r);
 	char current_char;
@@ -136,6 +142,7 @@ void do_one_time_pad(Action mode, ifstream& infile, ofstream& outfile, int r) {
 //		cout << plain;
 	}
 }
+
 
 void one_time_pad() {
 	Action mode;
@@ -168,6 +175,7 @@ void one_time_pad() {
 	}
 }
 
+
 // Read the file into memory for speed:
 string read_file(string filename) {
 	ifstream infile;
@@ -186,19 +194,16 @@ string read_file(string filename) {
 
 
 void secret() {
-
 	// We'll hunt for spaces, because they are the most common characters in most texts
 	int best_key = 0;
 	int best_spaces = 0;
 	string input_string = read_file("secret.txt");
 	for (int key = 1; key < 65535; key++) {
 		initialise_pseudo_random(key);
-//		cout << key << endl;
 		int num_spaces = 0;
 		char plain;
 		for (char& a : input_string) {
 			plain = rotate(a, next_pseudo_random_number(), Decrypt);
-//			cout << plain;
 			if (plain == ' ') {
 				num_spaces++;
 			}
@@ -218,6 +223,7 @@ void secret() {
 	infile.close();
 	outfile.close();
 }
+
 
 int main() {
 	int choice = -1;
