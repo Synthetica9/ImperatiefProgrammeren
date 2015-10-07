@@ -148,10 +148,7 @@ void one_time_pad() {
 		cout << "Select a mode; 0 = Encrypt, 1 = Decrypt: ";
 	} while(!get_input(mode_select) || mode_select < 0 || mode_select > 1);
 
-	if(mode_select == 0)
-		mode = Encrypt;
-	else
-		mode = Decrypt;
+	mode = Action(mode_select)
 
 
 	ifstream infile;
