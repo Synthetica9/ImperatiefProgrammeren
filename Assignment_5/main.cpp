@@ -6,6 +6,7 @@
 #include <fstream> // voor file I/O
 #include <cassert> // voor assertion checking
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -149,11 +150,8 @@ void one_time_pad() {
 
 	if(mode_select == 0)
 		mode = Encrypt;
-	else if(mode_select == 1)
-		mode = Decrypt;
 	else
-		//fuck 
-		assert(false);
+		mode = Decrypt;
 
 
 	ifstream infile;
@@ -188,22 +186,22 @@ string read_file(string filename) {
 
 
 void secret() {
-
 	// We'll hunt for spaces, because they are the most common characters in most texts
 	int best_key = 0;
 	int best_spaces = 0;
 	string input_string = read_file("secret.txt");
 	for(int key = 1; key < 65535; key++) {
 		initialise_pseudo_random(key);
-//		cout << key << endl;
 		int num_spaces = 0;
 
-		for(char& a : input_string) {
-			char plain = rotate(a, next_pseudo_random_number(), Decrypt);
-			if(plain == ' ') {
+		// It is not necessary to analyze the entire text. Analyzing ~1000 characters is sufficient.
+		for(int i = 0; i < min(int(input_string.length()), 1000); i++)
+		{
+			if(rotate(input_string[i], next_pseudo_random_number(), Decrypt) == ' ') {
 				num_spaces++;
 			}
 		}
+		
 		if(num_spaces > best_spaces) {
 			cout << "Found new best key: " << key << ", with " << num_spaces << " spaces." << endl;
 			best_spaces = num_spaces;
