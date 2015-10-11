@@ -25,7 +25,7 @@ typedef Cell Universe[Rows][Columns];
 
 const int search_radius = 1;
 
-bool live_conditions[] = {
+bool survive[] = {
 	false, // 0
 	false, // 1
 	true,  // 2
@@ -36,7 +36,7 @@ bool live_conditions[] = {
 	false  // 7
 };
 
-bool spawn_conditions[] = {
+bool birth[] = {
 	false, // 0
 	false, // 1
 	false, // 2
@@ -66,9 +66,9 @@ char Cell_to_token(Cell cell) {
 	result is dead in case of Dead cell, and result is live in case of Live cell.
 	*/
 	if(cell == Dead)
-		return dead;
+		return ' ';
 	else
-		return live;
+		return '#';
 }
 
 bool enter_filename(char filename[MaxFilenameLength]) {
@@ -215,8 +215,8 @@ void iter_universe(Universe old_universe, Universe new_universe) {
 				}
 			}
 
-			if(spawn_conditions[neighbour] ||
-			   (live_conditions[neighbour] && old_universe[y + 1][x + 1] == Live))
+			if(birth[neighbour] ||
+			   (survive[neighbour] && old_universe[y + 1][x + 1] == Live))
 				new_universe[y + 1][x + 1] = Live;
 		}
 	}
@@ -239,22 +239,106 @@ bool get_input(T &out_var) {
 	return true;
 }
 
+template <typename T>
+void prompt(T &out_var, char* prompt_text) {
+	do {
+		cout << prompt_text;
+	} while (!get_input(out_var));
+}
+
+void set_life_rules() {
+	bool B[] = { false, false, false, false, false, false, false, false };
+	bool S[] = { false, false, false, false, false, false, false, false };
+	cout
+		<< "Presets: " << endl
+		<< "1. \t Life (B3/S23)" << endl
+		<< "2. \t Highlife (B36/S23)" << endl
+		<< "3. \t Seeds (B2/S)" << endl
+		<< "4. \t 2x2 (B36/S125)" << endl
+		<< "5. \t Maze (B3/S12345)";
+	int choice;
+	prompt(choice, "Your choice? ");
+	switch (choice) {
+		case 1:
+			B[3] = true;
+			S[2] = true;
+			S[3] = true;
+			break;
+		case 2:
+			B[3] = true;
+			B[6] = true;
+			S[2] = true;
+			S[3] = true;
+			break;
+		case 3:
+			B[2] = true;
+			break;
+		case 4:
+			B[3] = true;
+			B[6] = true;
+			S[1] = true;
+			S[2] = true;
+			S[5] = true;
+			break;
+		case 5:
+			B[3] = true;
+			S[1] = true;
+			S[2] = true;
+			S[3] = true;
+			S[4] = true;
+			S[5] = true;
+			break;
+	}
+	for (int i = 0; i < 8; i++) {
+		birth[i] = B[i];
+		survive[i] = S[i];
+	}
+}
+
 void run_universe() {
 	Universe universe, tmp_universe;
-	read_universe_file(open_input_file(), universe);
-	ofstream output = open_output_file();
-	cout << "Enter iteration count: ";
-	int iteration_count;
-	get_input(iteration_count);
-	cout << endl << "Enter sleep time (ms): ";
-	get_input(Sleeptime);
+	ofstream out_file;
+	ifstream in_file;
+	int iterations;
 
-	for(int i = 0; i < iteration_count; i++) {
-		render_universe(universe);
-		iter_universe(universe, tmp_universe);
-		swap(universe, tmp_universe);
+	int input = -1;
+	while (input != 6) {
+		cout
+			<< "1. \t Start execution" << endl
+			<< "2. \t Change execution speed" << endl
+			<< "3. \t Change life rules" << endl
+			<< "4. \t Load universe file" << endl
+			<< "5. \t Write current universe to file" << endl
+			<< "6. \t Quit" << endl;
+		prompt(input, "Your choice: ");
+		switch (input) {
+			case 1:
+				prompt(iterations, "Enter a number of iterations to run");
+				for (int i = 0; i < iterations; i++) {
+					render_universe(universe);
+					iter_universe(universe, tmp_universe);
+					swap(universe, tmp_universe);
+				}
+				break;
+			case 2:
+				prompt(Sleeptime, "Enter sleep time (ms): "); break;
+			case 3:
+				set_life_rules(); break;
+			case 4: 
+				in_file = open_input_file();
+				read_universe_file(in_file, universe);
+				in_file.close();
+				break;
+			case 5:
+				out_file = open_output_file();
+				write_universe_file(out_file, universe);
+				out_file.close();
+			case 6: 
+				return;
+		}
 	}
-	write_universe_file(output, universe);
+	
+	
 }
 
 int main() {
