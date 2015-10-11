@@ -19,7 +19,7 @@ const int Columns = NrOfColumns + 2; // the number of columns in a universe arra
 
 const int MaxFilenameLength = 80; // the maximum number of characters for a file name (including termination character)
 
-const int Sleeptime = 1000; // the pause time between animation-frames in msec
+const int Sleeptime = 100; // the pause time between animation-frames in msec
 
 typedef Cell Universe[Rows][Columns];
 
@@ -171,10 +171,10 @@ void count_neighbours (Universe universe, int neighbours[NrOfRows][NrOfColumns])
 	for (int y = 0; y < NrOfRows; y++) {
 		for (int x = 0; x < NrOfColumns; x++) {
 			neighbours[y][x] = 0;
-			for (int dy = -1; dy <= 1; dy++) {
-				for (int dx = -1; dx <= 1; dx++) {
-					if (!(x==0 && y==0))
-						neighbours[y][x] += universe[y + 1 + dy][x + 1 + dx] == Live;
+			for (int dy = 0; dy <= 2; dy++) {
+				for (int dx = 0; dx <= 2; dx++) {
+					if (!(dx==1 && dy==1))
+						neighbours[y][x] += universe[y + dy][x + dx] == Live;
 				}
 			}
 		}
