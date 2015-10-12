@@ -19,7 +19,7 @@ const int Columns = NrOfColumns + 2; // the number of columns in a universe arra
 
 const int MaxFilenameLength = 80; // the maximum number of characters for a file name (including termination character)
 
-int Sleeptime = 100; // the pause time between animation-frames in msec
+int Sleeptime = 20; // the pause time between animation-frames in msec
 
 typedef Cell Universe[Rows][Columns];
 
@@ -66,9 +66,9 @@ char Cell_to_token(Cell cell) {
 	result is dead in case of Dead cell, and result is live in case of Live cell.
 	*/
 	if(cell == Dead)
-		return ' ';
+		return dead;
 	else
-		return '#';
+		return live;
 }
 
 bool enter_filename(char filename[MaxFilenameLength]) {
@@ -131,7 +131,7 @@ bool read_universe_file(ifstream &inputfile, Universe universe) {
 	return end_of_file;
 }
 
-void write_universe_file(ofstream &outfile, Universe universe) {
+void write_universe_file(ofstream & outfile, Universe universe) {
 	for(int y = 0; y < NrOfRows; y++) {
 		for(int x = 0; x < NrOfColumns; x++) {
 			outfile.put(Cell_to_token(universe[y + 1][x + 1]));
@@ -165,36 +165,23 @@ void empty_universe(Universe universe) {
 	}
 }
 
-ifstream open_input_file() {
-	//TODO: Pre/Post conditions
-	ifstream infile;
+template <typename T>
+T open_file() {
+	T file;
 	char filename[MaxFilenameLength];
 	do {
-		if(!infile) {
-			cout << "Couldn't read file!" << endl;
-			infile.ignore(1000, '\n');
-			infile.clear();
+		if (!file) {
+			cout << "Couldn't open file!" << endl;
+			file.clear();
+			cin.clear();
 		}
-		cout << "Enter an input filename:";
-		if(enter_filename(filename))
-			infile.open(filename);
+		cout << "Enter an filename: ";
+		if (enter_filename(filename))
+			file.open(filename);
 		else
-			cout << "Invalid filename" << endl;
-	} while(!infile);
-	return infile;
-}
-
-ofstream open_output_file() {
-	ofstream outfile;
-	char filename[MaxFilenameLength];
-	do {
-		cout << "Enter an output filename:";
-		if(enter_filename(filename))
-			outfile.open(filename);
-		else
-			cout << "Invalid filename" << endl;
-	} while(!outfile);
-	return outfile;
+			cout << "Invalid filename!" << endl;
+	} while (!file);
+	return file;
 }
 
 void render_universe(Universe universe) {
@@ -236,11 +223,12 @@ bool get_input(T &out_var) {
 		cin.ignore(1000, '\n');
 		return false;
 	}
+	cin.ignore(1000, '\n');
 	return true;
 }
 
 template <typename T>
-void prompt(T &out_var, char* prompt_text) {
+void prompt(T &out_var, char const * prompt_text) {
 	do {
 		cout << prompt_text;
 	} while (!get_input(out_var));
@@ -255,7 +243,7 @@ void set_life_rules() {
 		<< "2. \t Highlife (B36/S23)" << endl
 		<< "3. \t Seeds (B2/S)" << endl
 		<< "4. \t 2x2 (B36/S125)" << endl
-		<< "5. \t Maze (B3/S12345)";
+		<< "5. \t Maze (B3/S12345)" << endl;
 	int choice;
 	prompt(choice, "Your choice? ");
 	switch (choice) {
@@ -295,14 +283,26 @@ void set_life_rules() {
 	}
 }
 
-void run_universe() {
-	Universe universe, tmp_universe;
-	ofstream out_file;
-	ifstream in_file;
-	int iterations;
+void run_universe(Universe& universe, int iterations) {
+	Universe tmp_universe;
+	for (int i = 0; i < iterations; i++) {
+		render_universe(universe);
+		iter_universe(universe, tmp_universe);
+		swap(universe, tmp_universe);
+	}
+}
 
+void run_universe() {
+	Universe universe;
+	ofstream out_file; //RAII managed
+	ifstream in_file; //idem
+	int iterations;
 	int input = -1;
+
+	empty_universe(universe);
+
 	while (input != 6) {
+		render_universe(universe);
 		cout
 			<< "1. \t Start execution" << endl
 			<< "2. \t Change execution speed" << endl
@@ -313,32 +313,27 @@ void run_universe() {
 		prompt(input, "Your choice: ");
 		switch (input) {
 			case 1:
-				prompt(iterations, "Enter a number of iterations to run");
-				for (int i = 0; i < iterations; i++) {
-					render_universe(universe);
-					iter_universe(universe, tmp_universe);
-					swap(universe, tmp_universe);
-				}
+				prompt(iterations, "Enter a number of iterations to run: ");
+				run_universe(universe, iterations);
 				break;
 			case 2:
-				prompt(Sleeptime, "Enter sleep time (ms): "); break;
+				prompt(Sleeptime, "Enter sleep time (ms): "); 
+				break;
 			case 3:
-				set_life_rules(); break;
+				set_life_rules(); 
+				break;
 			case 4: 
-				in_file = open_input_file();
+				in_file = open_file<ifstream>();
 				read_universe_file(in_file, universe);
-				in_file.close();
 				break;
 			case 5:
-				out_file = open_output_file();
+				out_file = open_file<ofstream>();
 				write_universe_file(out_file, universe);
-				out_file.close();
-			case 6: 
+				break;
+			case 6:
 				return;
 		}
 	}
-	
-	
 }
 
 int main() {
