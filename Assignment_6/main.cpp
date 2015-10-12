@@ -1,3 +1,6 @@
+// Name / student number / study student 1 : Patrick Hilhorst / s4577434 / Computer Science
+// Name / student number / study student 2 : Fons van der Plas / s4576586 / Mathematics
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -87,7 +90,8 @@ bool enter_filename(char filename[MaxFilenameLength]) {
 	return i < MaxFilenameLength;
 }
 
-bool read_universe_file(ifstream &inputfile, Universe universe) {
+template <typename T>
+bool read_universe_file(T&& inputfile, Universe universe) {
 	// Precondition:
 	assert(inputfile.is_open() && NrOfRows > 0 && NrOfColumns > 0);
 	/*  Postcondition:
@@ -131,7 +135,8 @@ bool read_universe_file(ifstream &inputfile, Universe universe) {
 	return end_of_file;
 }
 
-void write_universe_file(ofstream & outfile, Universe universe) {
+template <typename T>
+void write_universe_file(T&& outfile, Universe universe) {
 	for(int y = 0; y < NrOfRows; y++) {
 		for(int x = 0; x < NrOfColumns; x++) {
 			outfile.put(Cell_to_token(universe[y + 1][x + 1]));
@@ -323,12 +328,10 @@ void run_universe() {
 				set_life_rules(); 
 				break;
 			case 4: 
-				in_file = open_file<ifstream>();
-				read_universe_file(in_file, universe);
+				read_universe_file(open_file<ifstream>(), universe);
 				break;
 			case 5:
-				out_file = open_file<ofstream>();
-				write_universe_file(out_file, universe);
+				write_universe_file(open_file<ofstream>(), universe);
 				break;
 			case 6:
 				return;
