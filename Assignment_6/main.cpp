@@ -180,7 +180,7 @@ T open_file() {
 			file.clear();
 			cin.clear();
 		}
-		cout << "Enter an filename: ";
+		cout << "Enter a filename: ";
 		if (enter_filename(filename))
 			file.open(filename);
 		else
@@ -207,7 +207,7 @@ void iter_universe(Universe old_universe, Universe new_universe) {
 				}
 			}
 
-			if(birth[neighbour] ||
+			if((  birth[neighbour] && old_universe[y + 1][x + 1] == Dead) ||
 			   (survive[neighbour] && old_universe[y + 1][x + 1] == Live))
 				new_universe[y + 1][x + 1] = Live;
 		}
