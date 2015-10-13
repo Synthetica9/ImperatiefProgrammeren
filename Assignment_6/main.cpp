@@ -196,7 +196,6 @@ void render_universe(Universe universe) {
 }
 
 void iter_universe(Universe old_universe, Universe new_universe) {
-	empty_universe(new_universe);
 	for(int y = 0; y < NrOfRows; y++) {
 		for(int x = 0; x < NrOfColumns; x++) {
 			int neighbour = 0;
@@ -207,9 +206,11 @@ void iter_universe(Universe old_universe, Universe new_universe) {
 				}
 			}
 
-			if((  birth[neighbour] && old_universe[y + 1][x + 1] == Dead) ||
-			   (survive[neighbour] && old_universe[y + 1][x + 1] == Live))
+			if ((birth[neighbour] && old_universe[y + 1][x + 1] == Dead) ||
+				(survive[neighbour] && old_universe[y + 1][x + 1] == Live))
 				new_universe[y + 1][x + 1] = Live;
+			else
+				new_universe[y + 1][x + 1] = Dead;
 		}
 	}
 }
@@ -299,8 +300,6 @@ void run_universe(Universe& universe, int iterations) {
 
 void run_universe() {
 	Universe universe;
-	ofstream out_file; //RAII managed
-	ifstream in_file; //idem
 	int iterations;
 	int input = -1;
 
