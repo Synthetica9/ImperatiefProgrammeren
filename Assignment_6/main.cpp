@@ -163,6 +163,10 @@ void show_universe(Universe universe) {
 }
 
 void empty_universe(Universe universe) {
+	// Precondition:
+	assert(NrOfRows > 0 && NrOfColumns > 0);
+	/* All cells in the universe are in the state Dead
+	*/
 	for(int y = 0; y < Rows; y++) {
 		for(int x = 0; x < Columns; x++) {
 			universe[y][x] = Dead;
@@ -172,6 +176,11 @@ void empty_universe(Universe universe) {
 
 template <typename T>
 T open_file() {
+	// Precondition:
+	assert(True);
+	/* Asks a user for the file, and returns an open file 
+	(can be both ifstream and ofstream)
+	*/
 	T file;
 	char filename[MaxFilenameLength];
 	do {
@@ -190,12 +199,22 @@ T open_file() {
 }
 
 void render_universe(Universe universe) {
+	// Precondition:
+	assert(NrOfRows > 0 && NrOfColumns > 0 && Sleeptime >= 0);
+	/* Post-condtion
+	Renders an universe to the screen, over what was already there, 
+	and overwrites what was already there.*/
 	set_cursor_position(0, 0);
 	show_universe(universe);
 	Sleep(Sleeptime);
 }
 
 void iter_universe(Universe old_universe, Universe new_universe) {
+	assert(NrOfRows > 0 && NrOfColumns > 0);
+	/*Post-condition:
+	new_universe is now old_universe iterated by one step, 
+	according to the life rules in survive and birth.
+	*/
 	for(int y = 0; y < NrOfRows; y++) {
 		for(int x = 0; x < NrOfColumns; x++) {
 			int neighbour = 0;
@@ -235,12 +254,22 @@ bool get_input(T &out_var) {
 
 template <typename T>
 void prompt(T &out_var, char const * prompt_text) {
+	// Pre-condtion:
+	assert(true);
+	/* Post-condition:
+	out_var contains a valid value for type T, inputted by the user
+	*/
 	do {
 		cout << prompt_text;
 	} while (!get_input(out_var));
 }
 
 void set_life_rules() {
+	// Pre-condition
+	assert(true);
+	/*Post-condition:
+	The user is prompted to select a set of rules for birth and survival of cells
+	birth and survive are updated to reflect this choice*/
 	bool B[] = { false, false, false, false, false, false, false, false };
 	bool S[] = { false, false, false, false, false, false, false, false };
 	cout
