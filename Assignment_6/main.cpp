@@ -177,7 +177,7 @@ void empty_universe(Universe universe) {
 template <typename T>
 T open_file() {
 	// Precondition:
-	assert(True);
+	assert(true);
 	/* Asks a user for the file, and returns an open file 
 	(can be both ifstream and ofstream)
 	*/
@@ -269,7 +269,8 @@ void set_life_rules() {
 	assert(true);
 	/*Post-condition:
 	The user is prompted to select a set of rules for birth and survival of cells
-	birth and survive are updated to reflect this choice*/
+	birth and survive are updated to reflect this choice
+	*/
 	bool B[] = { false, false, false, false, false, false, false, false };
 	bool S[] = { false, false, false, false, false, false, false, false };
 	cout
@@ -319,6 +320,12 @@ void set_life_rules() {
 }
 
 void run_universe(Universe& universe, int iterations) {
+	// Pre-condition:
+	assert(NrOfRows > 0 && NrOfColumns > 0 && iterations >= 0);
+	/* Post-condition:
+	universe is updated to have made n steps, where n=iterations, according
+	to the rules set by birth and survival. All intermediate steps are shown
+	*/
 	Universe tmp_universe;
 	for (int i = 0; i < iterations; i++) {
 		render_universe(universe);
@@ -328,6 +335,12 @@ void run_universe(Universe& universe, int iterations) {
 }
 
 void run_universe() {
+	// Pre-condition:
+	assert(true);
+	/* Post-condtion:
+	Takes input from the user to manipulate, input, and output
+	an universe
+	*/
 	Universe universe;
 	int iterations;
 	int input = -1;
