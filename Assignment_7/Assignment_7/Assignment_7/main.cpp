@@ -4,6 +4,7 @@
 #include <fstream>
 #include <set>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 // Name / student number / study student 1 : Patrick Hilhorst / s4577434 / Computer Science
@@ -17,29 +18,7 @@ const set<char> alphabet = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k
 						    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 						    '\''};
 const char connector = '-';
-const int max_nr_of_words = 100000;
-string words[max_nr_of_words];
-int words_len = 0;
-
-// From slides (adapted to a template):
-template < typename T, typename U >
-int sequential_search(T array, int from, int to, U search_value) {   
-	// pre-condition:
-	assert(0 <= from && 0 <= to);
-	//  post-condition: 
-	//  if from > to:	result value = to+1
-	//  if search_value is not an element of array[from] .. array[to]:
-	//		result value = to+1
-	//  otherwise:	result value is the index of the first occurrence of 
-	//		search_value in array[from] .. array[to]
-	//		hence: from <= result value <= to
-	if (from > to)
-		return to + 1;
-	int  position = from;
-	while (position <= to && array[position] != search_value)
-		position++;
-	return  position;
-}
+const char spacer = ' ';
 
 string read_word(ifstream& infile) {
 	string word;
@@ -72,141 +51,114 @@ void complain() {
 	cout << "Invalid command!" << endl;
 }
 
-bool read_file(string filename) {
+string read_file(string filename) {
 	ifstream infile;
 	infile.open(filename);
+	string file_content;
 	if (infile) {
-		for (words_len = 0; words_len < max_nr_of_words && infile; words_len++) {
-			string current_word = read_word(infile);
-			words[words_len] = current_word;
+		int words_len;
+		for (words_len = 0; infile; words_len++) {
+			file_content += read_word(infile);
+			file_content += spacer;
 		}
 		cout << "Read " << --words_len << " words!" << endl;
-		return words_len < max_nr_of_words;
+		return file_content;
 	}
-	return false;
+	cout << "Error reading file (Check your filename?)";
+	return string();
 }
 
-void show_words() {
-	cout << "Showing " << words_len << " words" << endl;
-	for (int i = 0; i < words_len; i++) {
-		cout << words[i] << ' ';
-	}
-	cout << endl;
-}
 
-void display_context(int start_word_index, int end_word_index, int context) {
-	{
-		for (int j = start_word_index - context + 1; j <= end_word_index + context; j++)
-			cout << words[j] << ' ';
-		cout << endl << endl;
-	}
-}
-
-void display_match(bool show_occurances, int show_context, int start_word_index, int end_word_index) {
-	if (show_occurances)
-		cout << "Found occurance at " << end_word_index << endl;
-
-	// Show context, if context > 0;
-	if (show_context > 0)
-		display_context(start_word_index, end_word_index, show_context);
-}
-
-void show_summary(int occurances) {
-	cout
-		<< endl
-		<< "Found " << occurances << " occurances." << endl
-		<< "This represents " << occurances / words_len * 100 << "% of words" << endl;
-}
-
-void count_occurances(string to_find, bool show_occurances, int show_context) {
-	int occurances = 0, to_find_index = 0, start_word_index = 0;
-	cout << "Looking for string with length " << to_find.length() << endl;
-	for (int i = 0; i < words_len; i++) {
-		for (char c : words[i]) {
-			if (to_find[to_find_index++] != c || to_find_index > to_find.length()) {
-				to_find_index = -1;
-				// Gets incremented to 0 directly outside the loop
-				start_word_index = i;
-				break;
+void count_occurances(string to_find, string find_in, bool show_occurances, uint32_t show_context) {
+	uint64_t last_index = 1;
+	int counted = 0;
+	do {
+		last_index = find_in.find(to_find + " ", last_index) + 1;
+		if (last_index != 0) { // Returnvalue of -1
+			if (show_occurances) {
+//				cout << last_index << ": ";
+				// +1 as a correction to 0-indexing
+				cout << count(find_in.c_str(), find_in.c_str() + last_index, ' ') + 1 << ": ";
+				int start_context_index = last_index - 1;
+				int end_context_index = last_index + to_find.length();
+				for (int i = 0; i < show_context; i++) {
+					while (start_context_index > 0 && find_in[--start_context_index] != spacer);
+					while (end_context_index < find_in.length() && find_in[++end_context_index] != spacer);
+				}
+				for (int string_index = start_context_index + 1; string_index < end_context_index; string_index++) {
+					cout << find_in[string_index];
+				}
+				cout << endl;
 			}
+			counted++;
 		}
-		if (to_find_index == int(to_find.length())) {
-			// Found a match
-			occurances++;
-			to_find_index = -1;
-			display_match(show_occurances, show_context, start_word_index, i);
-			
-		}
-		to_find_index++;
-		// Account for the space. 
-
-	}
-	show_summary(occurances);
+	} while (last_index != 0);
+	cout << "Found a total number of " << counted << "." << endl;
 }
 
-void do_enter() {
+string do_enter() {
 	cin.ignore(1, ' '); // Dumps the space between the arguments
 	string command_args;
 	getline(cin, command_args);
 	// Read a file
 	cout << "Reading file \"" << command_args << '"' << endl;
-	cout <<
-		(read_file(command_args)
-			 ? "Succesfully read a file!"
-			 : "Error reading file! (check your filename?)")
-		<< endl;
+	return read_file(command_args);
 }
 
 void get_command() {
-	string command_name;
-	cout << ">>> ";
-	cin >> command_name; // Reads until the space
-	
-	if (command_name == "content") {
-		// Show the content of the read file
-		show_words();
-	}
-	else if (command_name == "stop" || command_name == "exit" || 
-			 command_name == "quit" || command_name == "\x04") { // \x04 = ctrl-d
-		cout << "Bye!" << endl;
-		exit(0);
-	}
-	else if (command_name == "enter") {
-		do_enter();
-	} else if (command_name == "count" || command_name == "context" || command_name == "where") {
-		int context = 0;
-		
-		if (command_name == "context") {
-			// We need to read an int first.
-			cin >> context;
+	string file_content;
+	while (true) {
+		string command_name;
+		cout << ">>> ";
+		cin >> command_name; // Reads until the space
+
+		if (command_name == "content") {
+			cout << file_content << endl;
 		}
+		else if (command_name == "stop" || command_name == "exit" ||
+			command_name == "quit" || command_name == "\x04") { // \x04 = ctrl-d
+			cout << "Bye!" << endl;
+			exit(0);
+		}
+		else if (command_name == "enter") {
+			file_content = do_enter();
+		}
+		else if (command_name == "count" || command_name == "context" || command_name == "where") {
+			int context = 0;
 
-		if (cin) {
-			// Succesfully executed cin >> context, or didn't at all
-			cin.ignore(1, ' ');
-			string to_find;
-			getline(cin, to_find);
+			if (command_name == "context") {
+				// We need to read an int first.
+				cin >> context;
+			}
 
-			count_occurances(to_find, command_name != "count", context);
-		} else {
+			if (cin) {
+				// Succesfully executed cin >> context, or didn't at all
+				string to_find;
+				getline(cin, to_find);
+				count_occurances(to_find, file_content, command_name != "count", context);
+//				count_occurances(to_find, command_name != "count", context);
+			}
+			else {
+				complain();
+				cin.ignore(1000, '\n');
+				cin.clear();
+			}
+
+
+		}
+		else {
 			complain();
 			cin.ignore(1000, '\n');
 			cin.clear();
-		}
-		
-
-	} else {
-		complain();
-		cin.ignore(1000, '\n');
-		cin.clear();
-		if (int(command_name.length()) == 1) {
-			cout << int(command_name[0]) << endl;
+			if (int(command_name.length()) == 1) {
+				cout << int(command_name[0]) << endl;
+			}
 		}
 	}
+	
 	
 }
 
 int main() {
-	while (true)
-		get_command();
+	get_command();
 }
