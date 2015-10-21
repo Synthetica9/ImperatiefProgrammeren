@@ -2,58 +2,46 @@
 #include <assert.h>
 #include <string>
 #include <fstream>
-#include <set>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 // Name / student number / study student 1 : Patrick Hilhorst / s4577434 / Computer Science
 // Name / student number / study student 2 : Fons van der Plas / s4576586 / Mathematics
 
 
-// "{'" + "', '".join(string.ascii_letters) + "'}"
-const set<char> alphabet = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
-						    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
-						    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-						    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-						    '\''};
 const char connector = '-';
 const int max_nr_of_words = 100000;
 string words[max_nr_of_words];
 int words_len = 0;
 
-// From slides (adapted to a template):
-template < typename T, typename U >
-int sequential_search(T array, int from, int to, U search_value) {   
-	// pre-condition:
-	assert(0 <= from && 0 <= to);
-	//  post-condition: 
-	//  if from > to:	result value = to+1
-	//  if search_value is not an element of array[from] .. array[to]:
-	//		result value = to+1
-	//  otherwise:	result value is the index of the first occurrence of 
-	//		search_value in array[from] .. array[to]
-	//		hence: from <= result value <= to
-	if (from > to)
-		return to + 1;
-	int  position = from;
-	while (position <= to && array[position] != search_value)
-		position++;
-	return  position;
+bool in_alphabet(char c) {
+	// Pre-condition:
+	assert(c > 0);
+	// Post condition
+	// Return is true iff char c is a member of the alphabet or equal to a single apostrophe
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '\'';
 }
 
 string read_word(ifstream& infile) {
+	// Pre-condtion:
+	assert(infile.is_open() && infile);
+	// Post-condition:
+	// Returns the next word in infile, according to the definition in the assignment, in the bonus.
+	// infile is still open, further than it was before, and might have encountered an error 
+	// (not guaranteed, but it is not guarranteed that it hasn't either)
 	string word;
 	char current_char = '\0';
 	do {
 		infile.get(current_char);
-	} while (alphabet.count(current_char) == 0 && infile);
+	} while (in_alphabet(current_char) && infile);
 	
 	while (infile) {
-		if (alphabet.count(current_char) == 0) {
+		if (in_alphabet(current_char)) {
 			if (current_char == connector) {
 				char next_char;
 				infile.get(next_char);
-				if (alphabet.count(next_char) == 0) {
+				if (in_alphabet(next_char)) {
 					return word;
 				}
 				word += current_char += next_char;
@@ -68,11 +56,12 @@ string read_word(ifstream& infile) {
 	return word;
 }
 
-void complain() {
-	cout << "Invalid command!" << endl;
-}
 
 bool read_file(string filename) {
+	// Pre-condition:
+	assert(true);
+	// Post-condition
+	// Return is true iff the file was successfully read.
 	ifstream infile;
 	infile.open(filename);
 	if (infile) {
@@ -87,22 +76,32 @@ bool read_file(string filename) {
 }
 
 void show_words() {
+	// Pre-condition:
+	assert(words_len <= max_nr_of_words);
+	// Post-condition:
+	// The entire content of the array containing the words in displayed in cout.
 	cout << "Showing " << words_len << " words" << endl;
-	for (int i = 0; i < words_len; i++) {
+	for (int i = 0; i < words_len; i++)
 		cout << words[i] << ' ';
-	}
 	cout << endl;
 }
 
 void display_context(int start_word_index, int end_word_index, int context) {
-	{
-		for (int j = start_word_index - context + 1; j <= end_word_index + context; j++)
-			cout << words[j] << ' ';
-		cout << endl << endl;
-	}
+	// Pre-condition:
+	assert(start_word_index <= end_word_index && context >= 0 && start_word_index >= 0 && end_word_index < words_len);
+	// Post-condition:
+	// The context of the word specified by start_word_index and end_word_index is output to cout.
+	for (int j = max(0, start_word_index - context + 1); j <= min(end_word_index + context, end_word_index); j++)
+		cout << words[j] << ' ';
+	cout << endl << endl;
 }
 
 void display_match(bool show_occurances, int show_context, int start_word_index, int end_word_index) {
+	// Pre-condition:
+	assert(start_word_index <= end_word_index && show_context >= 0 && start_word_index >= 0 && end_word_index < words_len);
+	// Post-condition:
+	// The occurance, specified by start_word_index and end_word_index is shown to screen iff show_occurances
+
 	if (show_occurances)
 		cout << "Found occurance at " << end_word_index << endl;
 
@@ -112,6 +111,10 @@ void display_match(bool show_occurances, int show_context, int start_word_index,
 }
 
 void show_summary(int occurances) {
+	// Pre-condition:
+	assert(words_len > 0 && occurances > 0);
+	// Post-condition:
+	// A quick summary of the amount of occurances is shown to screen.
 	cout
 		<< endl
 		<< "Found " << occurances << " occurances." << endl
@@ -119,6 +122,10 @@ void show_summary(int occurances) {
 }
 
 void count_occurances(string to_find, bool show_occurances, int show_context) {
+	// Pre-condition
+	assert(to_find.length() > 0 && show_context > 0);
+	// Post-condition
+	// Shows the count of to_find, and shows the occurances and the context if asked for
 	int occurances = 0, to_find_index = 0, start_word_index = 0;
 	cout << "Looking for string with length " << to_find.length() << endl;
 	for (int i = 0; i < words_len; i++) {
@@ -145,6 +152,10 @@ void count_occurances(string to_find, bool show_occurances, int show_context) {
 }
 
 void do_enter() {
+	// Pre-condition:
+	assert(cin);
+	// Post-condition:
+	// Tries to read a file into memory and reports the status to the user.
 	cin.ignore(1, ' '); // Dumps the space between the arguments
 	string command_args;
 	getline(cin, command_args);
@@ -157,53 +168,69 @@ void do_enter() {
 		<< endl;
 }
 
-void get_command() {
-	string command_name;
-	cout << ">>> ";
-	cin >> command_name; // Reads until the space
-	
-	if (command_name == "content") {
-		// Show the content of the read file
+void complain_and_tidy() {
+	// Pre-condition:
+	assert(true);
+	// Post-condition:
+	// Cin is cleared and the user is notified.
+	cout << "Invalid command!" << endl;
+	cin.ignore(1000, '\n');
+	cin.clear();
+}
+
+void do_search(const string& command_name) {
+	// Pre-condition:
+	assert(command_name.length() > 0);
+	// Post-condtion:
+	// One of the 3 search commands is executed
+	int context = 0;
+		
+	if (command_name == "context")
+		// We need to read an int first.
+		cin >> context;
+
+	if (cin) {
+		// Succesfully executed cin >> context, or didn't at all
+		cin.ignore(1, ' ');
+		string to_find;
+		getline(cin, to_find);
+
+		count_occurances(to_find, command_name != "count", context);
+	} else
+		complain_and_tidy();
+}
+
+void execute_command(const string& command_name) {
+	// Pre-condition:
+	assert(command_name.length() > 0);
+	// Post-condtion:
+	// One of the commands is executed
+	if (command_name == "content") 
+	// Show the content of the read file
 		show_words();
-	}
-	else if (command_name == "stop" || command_name == "exit" || 
-			 command_name == "quit" || command_name == "\x04") { // \x04 = ctrl-d
+	else if (command_name == "stop" || command_name == "exit" ||
+		command_name == "quit" || command_name == "\x04") {// \x04 = ctrl-d
 		cout << "Bye!" << endl;
 		exit(0);
 	}
-	else if (command_name == "enter") {
+	else if (command_name == "enter")
 		do_enter();
-	} else if (command_name == "count" || command_name == "context" || command_name == "where") {
-		int context = 0;
-		
-		if (command_name == "context") {
-			// We need to read an int first.
-			cin >> context;
-		}
+	else if (command_name == "count" || command_name == "context" || command_name == "where")
+		do_search(command_name);
+	else 
+		complain_and_tidy();
+}
 
-		if (cin) {
-			// Succesfully executed cin >> context, or didn't at all
-			cin.ignore(1, ' ');
-			string to_find;
-			getline(cin, to_find);
+void get_command() {
+	// Pre-condition:
+	assert(true);
+	// Post-condtion:
+	// The user is prompted for a command, this command is then executed
+	string command_name;
+	cout << ">>> ";
+	cin >> command_name; // Reads until the space
 
-			count_occurances(to_find, command_name != "count", context);
-		} else {
-			complain();
-			cin.ignore(1000, '\n');
-			cin.clear();
-		}
-		
-
-	} else {
-		complain();
-		cin.ignore(1000, '\n');
-		cin.clear();
-		if (int(command_name.length()) == 1) {
-			cout << int(command_name[0]) << endl;
-		}
-	}
-	
+	execute_command(command_name);
 }
 
 int main() {
