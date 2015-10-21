@@ -17,13 +17,13 @@ int words_len = 0;
 
 bool in_alphabet(char c) {
 	// Pre-condition:
-	assert(c > 0);
+	//	assert(c > 0);
 	// Post condition
 	// Return is true iff char c is a member of the alphabet or equal to a single apostrophe
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '\'';
 }
 
-string read_word(ifstream& infile) {
+string read_word(ifstream &infile) {
 	// Pre-condtion:
 	assert(infile.is_open() && infile);
 	// Post-condition:
@@ -34,19 +34,18 @@ string read_word(ifstream& infile) {
 	char current_char = '\0';
 	do {
 		infile.get(current_char);
-	} while (in_alphabet(current_char) && infile);
-	
+	} while (!in_alphabet(current_char) && infile);
+
 	while (infile) {
-		if (in_alphabet(current_char)) {
+		if (!in_alphabet(current_char)) {
 			if (current_char == connector) {
 				char next_char;
 				infile.get(next_char);
-				if (in_alphabet(next_char)) {
+				if (!in_alphabet(next_char)) {
 					return word;
 				}
 				word += current_char += next_char;
-			}
-			else {
+			} else {
 				return word;
 			}
 		}
@@ -91,7 +90,7 @@ void display_context(int start_word_index, int end_word_index, int context) {
 	assert(start_word_index <= end_word_index && context >= 0 && start_word_index >= 0 && end_word_index < words_len);
 	// Post-condition:
 	// The context of the word specified by start_word_index and end_word_index is output to cout.
-	for (int j = max(0, start_word_index - context + 1); j <= min(end_word_index + context, end_word_index); j++)
+	for (int j = max(0, start_word_index - context + 1); j <= min(end_word_index + context, words_len - 1); j++)
 		cout << words[j] << ' ';
 	cout << endl << endl;
 }
@@ -112,18 +111,21 @@ void display_match(bool show_occurances, int show_context, int start_word_index,
 
 void show_summary(int occurances) {
 	// Pre-condition:
-	assert(words_len > 0 && occurances > 0);
+	assert(words_len > 0 && occurances >= 0);
 	// Post-condition:
 	// A quick summary of the amount of occurances is shown to screen.
-	cout
-		<< endl
-		<< "Found " << occurances << " occurances." << endl
-		<< "This represents " << occurances / words_len * 100 << "% of words" << endl;
+	if (occurances == 0)
+		cout << endl << "Did not find any occurances!" << endl;
+	else
+		cout
+			<< endl
+			<< "Found " << occurances << " occurances." << endl
+			<< "This represents " << float(occurances * 100) / words_len << "% of words" << endl;
 }
 
 void count_occurances(string to_find, bool show_occurances, int show_context) {
 	// Pre-condition
-	assert(to_find.length() > 0 && show_context > 0);
+	assert(to_find.length() > 0 && show_context >= 0);
 	// Post-condition
 	// Shows the count of to_find, and shows the occurances and the context if asked for
 	int occurances = 0, to_find_index = 0, start_word_index = 0;
@@ -142,7 +144,7 @@ void count_occurances(string to_find, bool show_occurances, int show_context) {
 			occurances++;
 			to_find_index = -1;
 			display_match(show_occurances, show_context, start_word_index, i);
-			
+
 		}
 		to_find_index++;
 		// Account for the space. 
@@ -178,15 +180,15 @@ void complain_and_tidy() {
 	cin.clear();
 }
 
-void do_search(const string& command_name) {
+void do_search(const string &command_name) {
 	// Pre-condition:
 	assert(command_name.length() > 0);
 	// Post-condtion:
 	// One of the 3 search commands is executed
 	int context = 0;
-		
+
 	if (command_name == "context")
-		// We need to read an int first.
+	// We need to read an int first.
 		cin >> context;
 
 	if (cin) {
@@ -200,24 +202,26 @@ void do_search(const string& command_name) {
 		complain_and_tidy();
 }
 
-void execute_command(const string& command_name) {
+void execute_command(const string &command_name) {
 	// Pre-condition:
-	assert(command_name.length() > 0);
+	assert(true);
 	// Post-condtion:
 	// One of the commands is executed
-	if (command_name == "content") 
+	if (command_name == "enter")
+		do_enter();
+	else if (words_len == 0) {
+		cout << "Please enter a file first" << endl;
+		complain_and_tidy();
+	} else if (command_name == "content")
 	// Show the content of the read file
 		show_words();
 	else if (command_name == "stop" || command_name == "exit" ||
 		command_name == "quit" || command_name == "\x04") {// \x04 = ctrl-d
 		cout << "Bye!" << endl;
 		exit(0);
-	}
-	else if (command_name == "enter")
-		do_enter();
-	else if (command_name == "count" || command_name == "context" || command_name == "where")
+	} else if (command_name == "count" || command_name == "context" || command_name == "where")
 		do_search(command_name);
-	else 
+	else
 		complain_and_tidy();
 }
 
