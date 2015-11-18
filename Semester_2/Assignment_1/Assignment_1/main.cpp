@@ -1,3 +1,6 @@
+// Name / student number / study student 1 : Patrick Hilhorst / s4577434 / Computer Science
+// Name / student number / study student 2 : Fons van der Plas / s4576586 / Mathematics
+
 /*********************************************************************
 *   Voorbeeldraamwerk voor opdracht 1 IPC015.
 *   Inhoud:
