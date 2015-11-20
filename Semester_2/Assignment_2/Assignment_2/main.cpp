@@ -23,6 +23,9 @@ int add_without_dup(char x, vector<char> &r) {// pre-condition:
     return i;
 }
 
+/* This is O(n^2), because for every element in the array, every previous element has to be checked to make sure it
+ * hasn't been added to the vector yet.*/
+
 int remove_dup(vector<char> &source, vector<char> &dest) {// pre-condition:
     assert (size(dest) == 0);
 //  post-condition: dest is a copy of source without duplicate elements
@@ -31,6 +34,21 @@ int remove_dup(vector<char> &source, vector<char> &dest) {// pre-condition:
     for (int i = 0; i < size(source); i++)
         nr_of_comparisons += add_without_dup(source[i], dest);
     return nr_of_comparisons;
+}
+
+int remove_sort_dup (vector<char>& source, vector<char>& dest)
+{// pre-condition:
+    assert (size (dest) == 0 && is_sorted (source)) ;
+// post-condition: dest is a copy of source without duplicate elements
+// result is the number of comparisons performed in this function
+    char prev_char = '\0';
+
+    for (char curr_char : source) {
+        if (prev_char != curr_char){
+            dest.push_back(curr_char);
+            prev_char = curr_char;
+        }
+    }
 }
 
 void fill(string txt, vector<char> &r) {// pre-condition:
@@ -59,3 +77,4 @@ int main() {
     cout << endl << "The number of comparisons is: " << nr_of_comparisons << endl;
     return 0;
 }
+
