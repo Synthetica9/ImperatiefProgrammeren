@@ -3,6 +3,167 @@
 #include <cassert>
 #include <vector>
 
+/* Assignment 2.1
+ * a. This is O(1), because all that happens is a constant amount of integer arithmatic.
+ * b. This is O(√N), because there is a for loop that does a constant amount of work, that runs √N times
+ * c. This is O(1), because it is a simiple lookup of a stored value
+ * d. This is O(K√N), because there is a loop that runs K times (length of the vector) with a runtime of √N (size of
+ *    the individual elements)
+ * e. This is O(N), because there is a loop that runs once for every element of N
+ */
+
+
+/* Assignment 2.2 a:
+ * Initial state:
+ * {3, 28, 14, -5, 6, 12, 3}
+ *
+ * {28, 14, -5, 6, 12, 3}
+ * 3
+ *
+ * {14, -5, 6, 12, 3}
+ * 3
+ * └─ 28
+ *
+ * {14, -5, 6, 12, 3}
+ * 28
+ * └─ 3
+ *
+ * {-5, 6, 12, 3}
+ * 28
+ * ├─ 3
+ * └─ 14
+ *
+ * {6, 12, 3}
+ * 28
+ * ├─ 3
+ * |  └─ -5
+ * └─ 14
+ *
+ * {12, 3}
+ * 28
+ * ├─ 3
+ * |  ├─ -5
+ * |  └─ 6
+ * └─ 14
+ *
+ * ∅
+ * 28
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 14
+ *    ├─ 12
+ *    └─ 3
+ *
+ * ∅
+ * 3
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 14
+ *    ├─ 12
+ *    └─ 28
+ *
+ * {28}
+ * 14
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 3
+ *    └─ 12
+ *
+ * {28}
+ * 14
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 12
+ *    └─ 3
+ *
+ * {28}
+ * 3
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 12
+ *    └─ 14
+ *
+ * {14, 28}
+ * 3
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 12
+ *
+ * {14, 28}
+ * 12
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 3
+ * └─ 3
+ *
+ * {14, 28}
+ * 3
+ * ├─ 6
+ * |  ├─ -5
+ * |  └─ 12
+ * └─ 3
+ *
+ * {12, 14, 28}
+ * 3
+ * ├─ 6
+ * |  └─ -5
+ * └─ 3
+ *
+ * {12, 14, 28}
+ * 6
+ * ├─ 3
+ * |  └─ -5
+ * └─ 3
+ *
+ * {12, 14, 28}
+ * -5
+ * ├─ 3
+ * |  └─ 6
+ * └─ 3
+ *
+ * {6, 12, 14, 28}
+ * -5
+ * ├─ 3
+ * └─ 3
+ *
+ * {6, 12, 14, 28}
+ * 3
+ * ├─ -5
+ * └─ 3
+ *
+ * {3, 6, 12, 14, 28}
+ * 3
+ * └─ -5
+ *
+ * {3, 6, 12, 14, 28}
+ * 3
+ * └─ -5
+ *
+ * {3, 6, 12, 14, 28}
+ * -5
+ * └─ 3
+ *
+ * {3, 3, 6, 12, 14, 28}
+ * -5
+ *
+ * {-5, 3, 3, 6, 12, 14, 28}
+ *
+ * (Yes, this was all done by hand)
+ *
+ * b:
+ * push_up: there are log(N) "layers". An item has to traverse (at most) all those layers, so it is O(log(N))
+ * build_heap: calls push_up on all N elements, so it has to do O(N * log(N)) operations
+ * push_down: is basically the same as push_up, and also has to traverse at most one path; so this is also O(log(N))
+ * pick_heap is basically the same as build_heap, except shrinking the heap instead of growing it. So, this is also
+ * O(N * log(N))
+ */
+
 using namespace std;
 
 int size(vector<char> &r) {// pre-condition:
@@ -36,15 +197,26 @@ int remove_dup(vector<char> &source, vector<char> &dest) {// pre-condition:
     return nr_of_comparisons;
 }
 
-int remove_sort_dup (vector<char>& source, vector<char>& dest)
-{// pre-condition:
-    assert (size (dest) == 0 && is_sorted (source)) ;
+
+bool is_sorted(vector<char> &source) {
+    bool sorted = true;
+    char olditem = 0;
+    for (char item : source) {
+        sorted = (olditem <= item) && sorted;
+        olditem = item;
+    }
+    return sorted;
+}
+
+int remove_sort_dup(vector<char> &source, vector<char> &dest) {
+// pre-condition:
+    assert (size(dest) == 0 && is_sorted(source));
 // post-condition: dest is a copy of source without duplicate elements
 // result is the number of comparisons performed in this function
     char prev_char = '\0';
 
     for (char curr_char : source) {
-        if (prev_char != curr_char){
+        if (prev_char != curr_char) {
             dest.push_back(curr_char);
             prev_char = curr_char;
         }
