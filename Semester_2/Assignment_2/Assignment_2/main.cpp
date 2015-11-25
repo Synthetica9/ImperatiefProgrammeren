@@ -162,6 +162,9 @@
  * push_down: is basically the same as push_up, and also has to traverse at most one path; so this is also O(log(N))
  * pick_heap is basically the same as build_heap, except shrinking the heap instead of growing it. So, this is also
  * O(N * log(N))
+ *
+ * Since heapsort as a whole is just all these steps one after another, once, it is as a whole the complexity of the
+ * most complex step, O(N log(N)).
  */
 
 using namespace std;
@@ -199,6 +202,10 @@ int remove_dup(vector<char> &source, vector<char> &dest) {// pre-condition:
 
 
 bool is_sorted(vector<char> &source) {
+    // Pre-condition:
+    assert(true);
+    // Post-conditions:
+    // Returns true if source is sorted, false otherwise
     bool sorted = true;
     char olditem = 0;
     for (char item : source) {
@@ -223,14 +230,16 @@ int remove_sort_dup(vector<char> &source, vector<char> &dest) {
     }
 }
 
-void fill(string txt, vector<char> &r) {// pre-condition:
+void fill(string txt, vector<char> &r) {
+// pre-condition:
     assert (size(r) == 0);
 //  post-condition: r contains all characters of txt
     for (int i = 0; i < txt.size(); i++)
         r.push_back(txt[i]);
 }
 
-void show(vector<char> &r) {// pre-condition:
+void show(vector<char> &r) {
+// pre-condition:
     assert (true);
 //  post-condition: all elements of r are displayed (from index 0 to index size(r)-1)
     for (int i = 0; i < size(r); i++)
